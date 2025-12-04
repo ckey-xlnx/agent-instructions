@@ -27,8 +27,15 @@ This repository contains instruction files for AI-assisted code review and devel
 - Tool-specific flags and options for automated workflows
 - Separate from coding style - focuses on tool execution
 
+**infrastructure-knowledge.md**
+- General infrastructure information and service mappings
+- Jira instance to project mapping
+- Build systems, CI/CD, and deployment information
+- Operational knowledge that applies across projects
+
 ## Usage
 
-- For normal coding tasks, reference **coding-instructions.md** and **agent-tooling-instructions.md**
-- When performing code reviews or analyzing commits, reference **coding-instructions.md**, **review-instructions.md**, and **review-specifics.md**
+- For normal coding tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, and **infrastructure-knowledge.md**
+- When performing code reviews or analyzing commits, reference **coding-instructions.md**, **review-instructions.md**, **review-specifics.md**, and **infrastructure-knowledge.md**
 - For tool usage mechanics (debuggers, build systems, etc.), reference **agent-tooling-instructions.md**
+- For infrastructure information (Jira instances, service mappings, etc.), reference **infrastructure-knowledge.md**
