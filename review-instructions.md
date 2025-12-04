@@ -179,13 +179,13 @@ RECOMMENDED ACTION:
 All AI contributions to code reviews must be properly attributed using footer tags similar to commit attribution (see coding-instructions.md).
 
 **Format:**
-- `Review-delivered-by:` - When all assessment was human, AI just automated the process
-- `Review-aided-by:` - When review was collaborative between human and AI
-- `Review-reviewed-by:` - When majority of contribution was from AI
+- `AI-review-delivered-by:` - When all assessment was human, AI just automated the process
+- `AI-review-aided-by:` - When review was collaborative between human and AI
+- `AI-review-reviewed-by:` - When majority of contribution was from AI
 
 **Usage Rules:**
 
-1. **Review-delivered-by**: Use when the human reviewer:
+1. **AI-review-delivered-by**: Use when the human reviewer:
    - Made all assessment decisions independently
    - AI only automated the mechanical process of posting
    - Human wrote all review comments from scratch
@@ -194,10 +194,10 @@ All AI contributions to code reviews must be properly attributed using footer ta
    ```
    This looks good, please fix the whitespace issues on lines 45-47.
    
-   Review-delivered-by: Claude
+   AI-review-delivered-by: Claude
    ```
 
-2. **Review-aided-by**: Use when the review was collaborative:
+2. **AI-review-aided-by**: Use when the review was collaborative:
    - AI provided analysis and suggestions
    - Human reviewed, modified, and approved suggestions
    - Human added significant additional context or comments
@@ -207,10 +207,10 @@ All AI contributions to code reviews must be properly attributed using footer ta
    The function renaming improves debuggability. However, please also
    add a comment explaining why unique names are important here.
    
-   Review-aided-by: Claude
+   AI-review-aided-by: Claude
    ```
 
-3. **Review-reviewed-by**: Use when AI did the majority of the work:
+3. **AI-review-reviewed-by**: Use when AI did the majority of the work:
    - AI performed the analysis and generated most comments
    - Human approved with minimal modifications
    - Most feedback came directly from AI suggestions
@@ -222,14 +222,14 @@ All AI contributions to code reviews must be properly attributed using footer ta
    - Trailing whitespace on lines 130, 142
    - Missing error handling in new function
    
-   Review-reviewed-by: Claude
+   AI-review-reviewed-by: Claude
    ```
 
 **Attribution Guidelines:**
 
 - **Always include attribution** when AI was involved in any capacity
 - **Be honest** about the level of AI contribution
-- **Default to higher attribution** when uncertain (e.g., use "Review-reviewed-by" rather than "Review-aided-by" if mostly AI-generated)
+- **Default to higher attribution** when uncertain (e.g., use "AI-review-reviewed-by" rather than "AI-review-aided-by" if mostly AI-generated)
 - **Include tool name** (e.g., "Claude", "GitHub Copilot", "GPT-4")
 - **Omit attribution** only when AI was not used at all
 
@@ -239,7 +239,7 @@ Fully automated posting of human review:
 ```
 Ship It!
 
-Review-delivered-by: Claude
+AI-review-delivered-by: Claude
 ```
 
 Collaborative review:
@@ -248,7 +248,7 @@ Good refactoring. A few suggestions:
 - Consider adding unit tests for the new allocator
 - The error path on line 67 could use a comment
 
-Review-aided-by: Claude
+AI-review-aided-by: Claude
 ```
 
 Mostly AI-generated review:
@@ -258,7 +258,7 @@ This change looks good overall. Please address:
 - Trailing whitespace on lines 130, 142
 - Function could benefit from a docstring
 
-Review-reviewed-by: Claude
+AI-review-reviewed-by: Claude
 ```
 
 **Transparency Benefits:**
