@@ -13,10 +13,18 @@ Multiple Jira instances are used across different projects. When referencing Jir
 - Projects:
   - **IFOESW-*** - IFOE Software (legacy and Oktek interaction)
 
-**OnTrack Instance** (`ontrack`)
+**OnTrack Internal Instance** (`ontrack-internal`)
 - URL: https://ontrack-internal.amd.com
+- Purpose: Normal AMD internal tickets
 - Projects:
   - **FWDEV-*** - Firmware Development
+  - (Other internal AMD projects)
+
+**OnTrack External Instance** (`ontrack-external`)
+- URL: https://ontrack.amd.com
+- Purpose: Tickets shared with AMD customers/suppliers
+- Projects:
+  - (Customer/supplier collaboration projects)
 
 **AMD Atlassian Instance** (`amd`)
 - URL: https://amd.atlassian.net
@@ -39,8 +47,8 @@ Multiple Jira instances are used across different projects. When referencing Jir
 # Fetch an IFOESW ticket from Pensando
 get_issue(instance="pensando", issue_key="IFOESW-205")
 
-# Search for FWDEV tickets in OnTrack
-search_issues(instance="ontrack", jql="project = FWDEV AND status = Open")
+# Search for FWDEV tickets in OnTrack Internal
+search_issues(instance="ontrack-internal", jql="project = FWDEV AND status = Open")
 
 # Fetch a DMFPMSN ticket from AMD
 get_issue(instance="amd", issue_key="DMFPMSN-12345")
