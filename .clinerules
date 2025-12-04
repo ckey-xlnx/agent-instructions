@@ -1,0 +1,27 @@
+# Agent Instructions
+
+This repository contains instruction files for AI-assisted code review and development.
+
+## Instruction Files
+
+**coding-instructions.md**
+- Commit message format and philosophy
+- General coding style and patterns
+- Work patterns (bug fixes, features, cleanup)
+- Whitespace rules and TODO/FIXME requirements
+
+**review-instructions.md**
+- Automated review request feedback process
+- Four main capabilities: summary, analysis, interactive feedback, learning
+- Integration with ReviewBoard MCP server
+- Best practices for automated analysis and human oversight
+
+**review-specifics.md**
+- Template for repository-specific configuration
+- Customize for each codebase under review
+- Covers: naming conventions, architecture, current priorities, common issues
+
+## Usage
+
+- For normal coding tasks, reference **coding-instructions.md**
+- When performing code reviews or analyzing commits, reference all three files to ensure consistency with established standards and processes
