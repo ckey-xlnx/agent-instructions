@@ -65,7 +65,13 @@ Status: [pending/submitted]
    - Check for multi-line explanations on non-trivial changes
    - Assess whether commit philosophy is followed (incremental changes, design intent explanation)
 
-3. **Code change analysis**:
+3. **Existing review analysis**:
+   - Fetch all existing reviews and their comments
+   - Read replies to understand ongoing discussions
+   - Identify unresolved issues or open questions
+   - Note areas where clarification or additional feedback may be helpful
+
+4. **Code change analysis**:
    - Check for TODO/FIXME/HACK/XXX without Jira references
    - Verify whitespace rules (no trailing whitespace, empty blank lines)
    - Assess commit size and logical separation
@@ -74,7 +80,7 @@ Status: [pending/submitted]
    - Look for common bug patterns (memory leaks, pointer issues, missing checks)
    - Assess code clarity and maintainability
 
-4. **Controversy detection**:
+5. **Controversy detection**:
    Flag reviews that need human attention when:
    - Large architectural changes without adequate explanation
    - Deviations from established patterns without justification
@@ -371,7 +377,27 @@ The system integrates with ReviewBoard via MCP server:
 - `get_diff_content` - Get actual patches
 - `get_reviews` - Get existing reviews
 - `get_review_comments` - Get review comments
+- `get_review_replies` - Get replies to reviews
 - `post_review` - Submit review feedback
+- `post_review_reply` - Post a reply to an existing review
+
+### Generating Review Replies
+
+When analyzing a review request, always check for existing reviews and their comments. If there are comments that warrant a response:
+
+1. **Read existing comments and replies** using `get_review_comments` and `get_review_replies`
+2. **Identify opportunities for helpful replies**:
+   - Questions that need answers
+   - Clarifications that would help the discussion
+   - Additional context that supports or refines a comment
+   - Acknowledgment of valid concerns
+3. **Generate appropriate replies** using `post_review_reply` when:
+   - You can provide useful clarification
+   - There's an ongoing discussion that needs input
+   - A comment raises important points worth addressing
+4. **Include proper attribution** in reply body_bottom field (e.g., "AI-review-delivered-by: Claude")
+
+**Important**: Replies should add value to the discussion. Don't reply just to acknowledge - only reply when you have substantive information to contribute.
 
 ## Best Practices
 
