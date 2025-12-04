@@ -180,6 +180,17 @@ This file contains repository-specific coding style, architecture principles, an
 - What to watch for: [e.g., "New code should use allocators, not malloc"]
 - Related tickets: [e.g., "IFOESW-546, IFOESW-547"]
 
+**IFOESW-205: Configuration Value Justification**
+- Goal: Remove redundancy from verification-derived configuration values and add proper justification
+- Status: Ongoing - applies to configuration initialization code
+- What to watch for: Changes to configuration values (especially in `#if 1` blocks with IFOESW-205 comments) must include:
+  1. Removal of any redundant values that can be derived from other sources
+  2. Justification with citations from architecture spec (e.g., mission mode configuration section)
+  3. Detailed explanation of behavioral changes from verification baseline
+  4. Validation that changes are correct
+- Related tickets: IFOESW-205
+- Key requirement: Any modification to configuration values marked with IFOESW-205 comments requires detailed explanation and cannot be approved without proper justification
+
 **[Effort Name 2]**: [e.g., "Error Handling Standardization"]
 - Goal: [e.g., "Consistent error return codes across modules"]
 - Status: [e.g., "Planning phase"]
