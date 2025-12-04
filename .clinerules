@@ -21,7 +21,14 @@ This repository contains instruction files for AI-assisted code review and devel
 - Customize for each codebase under review
 - Covers: naming conventions, architecture, current priorities, common issues
 
+**agent-tooling-instructions.md**
+- Agent-specific tooling mechanics and usage guidelines
+- How agents should interact with development tools
+- Tool-specific flags and options for automated workflows
+- Separate from coding style - focuses on tool execution
+
 ## Usage
 
-- For normal coding tasks, reference **coding-instructions.md**
-- When performing code reviews or analyzing commits, reference all three files to ensure consistency with established standards and processes
+- For normal coding tasks, reference **coding-instructions.md** and **agent-tooling-instructions.md**
+- When performing code reviews or analyzing commits, reference **coding-instructions.md**, **review-instructions.md**, and **review-specifics.md**
+- For tool usage mechanics (debuggers, build systems, etc.), reference **agent-tooling-instructions.md**
