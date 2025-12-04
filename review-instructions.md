@@ -153,14 +153,17 @@ RECOMMENDED ACTION:
    - Body top (appears above comments)
    - Body bottom (appears below comments)
 
-5. Confirm before posting:
+5. Determine AI attribution level (see Review Attribution section below)
+
+6. Confirm before posting:
    - Show complete review preview
    - List all comments to be posted
+   - Show attribution footer that will be included
    - Ask for final confirmation
 
-6. Submit review via API
+7. Submit review via API with appropriate attribution
 
-7. Report results:
+8. Report results:
    - Confirmation of successful posting
    - Link to review
    - Summary of what was posted
@@ -170,6 +173,101 @@ RECOMMENDED ACTION:
 - Allow free-form additions at any point
 - Support batch operations (e.g., "include all whitespace comments")
 - Provide escape hatch to cancel before posting
+
+## Review Attribution
+
+All AI contributions to code reviews must be properly attributed using footer tags similar to commit attribution (see coding-instructions.md).
+
+**Format:**
+- `Review-delivered-by:` - When all assessment was human, AI just automated the process
+- `Review-aided-by:` - When review was collaborative between human and AI
+- `Review-reviewed-by:` - When majority of contribution was from AI
+
+**Usage Rules:**
+
+1. **Review-delivered-by**: Use when the human reviewer:
+   - Made all assessment decisions independently
+   - AI only automated the mechanical process of posting
+   - Human wrote all review comments from scratch
+   - AI provided no analysis or suggestions that were used
+   
+   ```
+   This looks good, please fix the whitespace issues on lines 45-47.
+   
+   Review-delivered-by: Claude
+   ```
+
+2. **Review-aided-by**: Use when the review was collaborative:
+   - AI provided analysis and suggestions
+   - Human reviewed, modified, and approved suggestions
+   - Human added significant additional context or comments
+   - Mix of AI-suggested and human-written feedback
+   
+   ```
+   The function renaming improves debuggability. However, please also
+   add a comment explaining why unique names are important here.
+   
+   Review-aided-by: Claude
+   ```
+
+3. **Review-reviewed-by**: Use when AI did the majority of the work:
+   - AI performed the analysis and generated most comments
+   - Human approved with minimal modifications
+   - Most feedback came directly from AI suggestions
+   - Human primarily validated rather than created content
+   
+   ```
+   Please address the following issues:
+   - TODO on line 45 needs Jira reference
+   - Trailing whitespace on lines 130, 142
+   - Missing error handling in new function
+   
+   Review-reviewed-by: Claude
+   ```
+
+**Attribution Guidelines:**
+
+- **Always include attribution** when AI was involved in any capacity
+- **Be honest** about the level of AI contribution
+- **Default to higher attribution** when uncertain (e.g., use "Review-reviewed-by" rather than "Review-aided-by" if mostly AI-generated)
+- **Include tool name** (e.g., "Claude", "GitHub Copilot", "GPT-4")
+- **Omit attribution** only when AI was not used at all
+
+**Examples:**
+
+Fully automated posting of human review:
+```
+Ship It!
+
+Review-delivered-by: Claude
+```
+
+Collaborative review:
+```
+Good refactoring. A few suggestions:
+- Consider adding unit tests for the new allocator
+- The error path on line 67 could use a comment
+
+Review-aided-by: Claude
+```
+
+Mostly AI-generated review:
+```
+This change looks good overall. Please address:
+- Missing Jira reference in TODO on line 45
+- Trailing whitespace on lines 130, 142
+- Function could benefit from a docstring
+
+Review-reviewed-by: Claude
+```
+
+**Transparency Benefits:**
+
+- Helps other reviewers understand the source of feedback
+- Tracks effectiveness of AI-assisted reviews
+- Maintains trust in the review process
+- Allows for appropriate weight to be given to different types of feedback
+- Enables learning about which AI contributions are most valuable
 
 ### D. Learning from Feedback
 
