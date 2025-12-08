@@ -19,6 +19,29 @@ This file contains repository-specific knowledge applicable to all development t
 
 ---
 
+## External Dependencies and Submodules
+
+### ifoe_ss_model (simnow repository)
+
+**Location**: `externals/ifoe_ss_model`
+
+**Purpose**: Provides the IFOE subsystem model for simulation
+
+**How it works**:
+- Functions like a git submodule but managed through CMake
+- The required revision is specified in `externals/CMakeLists.txt`
+- When building with ifoe_ss_model support enabled, `externals/CMakeLists.txt` will:
+  1. Clone the repository if not already present
+  2. Check out the correct revision as specified in the CMakeLists.txt
+  3. Make it available for the build
+
+**Key points**:
+- Not a true git submodule - managed by the build system
+- Revision updates are done by modifying `externals/CMakeLists.txt`
+- The repository is only cloned/updated when building with ifoe_ss_model support
+
+---
+
 ## Coding Style Specifics
 
 ### Naming Conventions
@@ -471,3 +494,4 @@ Commit 1: Add everything mixed together
 **Changes**: 
 - Renamed from review-specifics.md to repo-specific-knowledge.md
 - Updated description to cover all development tasks (review, coding, debugging)
+- Added "External Dependencies and Submodules" section with ifoe_ss_model information
