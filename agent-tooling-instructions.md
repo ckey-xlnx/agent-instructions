@@ -42,15 +42,20 @@ gdb --batch -ex "set pagination off" -ex "bt full" -ex "info registers" program 
 #### Git Commands
 
 **git diff and similar paging commands**:
+
+**Critical Rule**: Always use `--no-pager` for git commands that could potentially page output, regardless of whether you expect the output to be short. This ensures consistent, non-interactive behavior.
+
 ```bash
 # Good - output streams directly without paging
 git --no-pager diff
 git --no-pager log
+git --no-pager log --oneline -10  # Use --no-pager even for short output
 git --no-pager show
 
 # Bad - requires manual paging through output
 git diff
 git log
+git log --oneline -10  # Wrong even if output is expected to be short
 git show
 ```
 
