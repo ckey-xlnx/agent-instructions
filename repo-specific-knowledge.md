@@ -56,6 +56,23 @@ This file contains repository-specific knowledge applicable to all development t
 
 **Python location**: `/tools/pandora64/.package/python-3.14.0/bin/python3`
 
+#### Build Server Setup
+
+All build commands must be run on a build server. To set up an interactive build session:
+
+```bash
+# Start bash (needed if using zsh, as environment script requires bash)
+/tool/pandora64/bin/bash
+
+# Source the environment initialization script
+source /proj/verif_release_ro/cbwa_initscript/current/cbwa_init.bash
+
+# Submit interactive LSF job to build server
+lsf_bsub -q normal -Is -P simnow-perf -R "select[(type==RHEL7_64)] rusage[mem=64000]" /tool/pandora64/bin/bash
+
+# Now you're on the build server and can run build commands
+```
+
 #### Configure Release Build
 
 ```bash
