@@ -16,10 +16,10 @@ This repository contains instruction files for AI-assisted code review and devel
 - Integration with ReviewBoard MCP server
 - Best practices for automated analysis and human oversight
 
-**review-specifics.md**
-- Template for repository-specific configuration
-- Customize for each codebase under review
-- Covers: naming conventions, architecture, current priorities, common issues
+**repo-specific-knowledge.md**
+- Repository-specific knowledge for all development tasks
+- Customize for each repository you work with
+- Covers: naming conventions, architecture, current priorities, common issues, external dependencies
 
 **agent-tooling-instructions.md**
 - Agent-specific tooling mechanics and usage guidelines
@@ -35,7 +35,8 @@ This repository contains instruction files for AI-assisted code review and devel
 
 ## Usage
 
-- For normal coding tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, and **infrastructure-knowledge.md**
-- When performing code reviews or analyzing commits, reference **coding-instructions.md**, **review-instructions.md**, **review-specifics.md**, and **infrastructure-knowledge.md**
+- For normal coding tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
+- When performing code reviews or analyzing commits, reference **coding-instructions.md**, **review-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
+- For debugging tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
 - For tool usage mechanics (debuggers, build systems, etc.), reference **agent-tooling-instructions.md**
 - For infrastructure information (Jira instances, service mappings, etc.), reference **infrastructure-knowledge.md**

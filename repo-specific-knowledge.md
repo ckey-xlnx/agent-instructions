@@ -1,12 +1,12 @@
-# Review Specifics Template
+# Repository-Specific Knowledge
 
-This file contains repository-specific coding style, architecture principles, and current priorities for automated review analysis. Copy and customize this template for each repository you review.
+This file contains repository-specific knowledge applicable to all development tasks including code review, coding, and debugging. Copy and customize this template for each repository you work with.
 
 ---
 
 ## Repository Identification
 
-**Repository Name**: [e.g., mpifoe-emulator, sdp-firmware]
+**Repository Name**: [e.g., simnow, mpifoe-emulator, sdp-firmware]
 
 **Purpose**: [Brief description of what this repository does]
 
@@ -458,14 +458,16 @@ Commit 1: Add everything mixed together
 
 ## Notes
 
-- Update this file as patterns emerge from actual reviews
-- Keep it focused on actionable, verifiable rules
+- Update this file as patterns emerge from actual work
+- Keep it focused on actionable, verifiable information
 - Remove outdated sections when priorities change
 - Link to relevant documentation where appropriate
 - Include examples of good and bad code when helpful
 
 ## Last Updated
 
-**Date**: 2025-12-05
-**Updated by**: Claude (based on review r/29107 feedback)
-**Changes**: Added "Automated Review Checklist" section with 8 systematic checks based on missed issues in r/29107
+**Date**: 2025-12-08
+**Updated by**: Claude
+**Changes**: 
+- Renamed from review-specifics.md to repo-specific-knowledge.md
+- Updated description to cover all development tasks (review, coding, debugging)
