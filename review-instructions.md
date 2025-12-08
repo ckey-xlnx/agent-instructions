@@ -57,7 +57,14 @@ Status: [pending/submitted]
    - Existing reviews and comments
    - File context where needed
 
-2. **Commit message analysis**:
+2. **Read cited Jira tickets**:
+   - Extract Jira ticket references from commit messages (e.g., IFOESW-XXX, FWDEV-XXX)
+   - Use Jira MCP server to fetch ticket details
+   - Understand the context, requirements, and acceptance criteria
+   - Check if the code changes align with the ticket description
+   - Note any discrepancies between ticket and implementation
+
+3. **Commit message analysis**:
    - Verify ticket reference format (e.g., `IFOESW-XXX:`, `SIEEMU-XXX:`)
    - Check for descriptive summary after colon
    - Validate `cleanup:` prefix usage for non-functional changes
