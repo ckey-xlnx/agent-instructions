@@ -35,4 +35,76 @@ gdb --batch -ex "set pagination off" -ex "bt full" -ex "info registers" program 
 
 ## General Tool Usage Guidelines
 
+### Non-Interactive Tool Execution
+
+**Critical Rule**: Tools cannot be run interactively. All commands must complete without requiring user input or manual paging.
+
+#### Git Commands
+
+**git diff and similar paging commands**:
+```bash
+# Good - output streams directly without paging
+git --no-pager diff
+git --no-pager log
+git --no-pager show
+
+# Bad - requires manual paging through output
+git diff
+git log
+git show
+```
+
+**git rebase -i (interactive rebase)**:
+```bash
+# Good - programmatically provide rebase instructions
+GIT_SEQUENCE_EDITOR="sed -i 's/^pick/edit/'" git rebase -i HEAD~3
+
+# Good - use environment variable for complex edits
+GIT_SEQUENCE_EDITOR="cat > /tmp/rebase-todo && sed -i '2s/pick/squash/' /tmp/rebase-todo" git rebase -i HEAD~3
+
+# Bad - opens editor for user interaction
+git rebase -i HEAD~3
+```
+
+**Common interactive rebase operations**:
+```bash
+# Squash last 2 commits
+GIT_SEQUENCE_EDITOR="sed -i '2s/^pick/squash/'" git rebase -i HEAD~2
+
+# Edit a specific commit
+GIT_SEQUENCE_EDITOR="sed -i '1s/^pick/edit/'" git rebase -i HEAD~1
+
+# Reorder commits (swap first two)
+GIT_SEQUENCE_EDITOR="sed -i '1h;2,1H;1d;2G'" git rebase -i HEAD~2
+
+# Drop a commit
+GIT_SEQUENCE_EDITOR="sed -i '2d'" git rebase -i HEAD~3
+```
+
+#### Other Common Interactive Tools
+
+**less, more, and pagers**:
+```bash
+# Good - use cat or redirect to file
+cat large_file.txt
+command | cat
+
+# Bad - requires manual paging
+less large_file.txt
+command | less
+```
+
+**Text editors (vim, nano, etc.)**:
+```bash
+# Good - use non-interactive tools
+sed -i 's/old/new/' file.txt
+echo "content" > file.txt
+
+# Bad - opens interactive editor
+vim file.txt
+nano file.txt
+```
+
+**Rationale**: Automated workflows cannot handle interactive prompts, paging, or editor sessions. All operations must be scriptable and complete without user intervention.
+
 (Additional agent-specific tooling instructions will be added here as needed)
