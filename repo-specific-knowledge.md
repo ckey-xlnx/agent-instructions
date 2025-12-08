@@ -42,6 +42,85 @@ This file contains repository-specific knowledge applicable to all development t
 
 ---
 
+## Build System
+
+### SimNow Build Configuration
+
+**Build tool**: CMake with Ninja generator
+
+**CMake location**: `/tool/pandora/.package/cmake-3.30.0/bin/cmake`
+
+**Ninja location**: `/tool/pandora/.package/ninja-1.12.1/bin/ninja`
+
+**Git location**: `/tools/pandora64/.package/git-2.48.1/bin/git`
+
+**Python location**: `/tools/pandora64/.package/python-3.14.0/bin/python3`
+
+#### Configure Release Build
+
+```bash
+/tool/pandora/.package/cmake-3.30.0/bin/cmake \
+  --preset=linux-ninja-pandora-gcc10 \
+  -S . \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DGIT_EXECUTABLE=/tools/pandora64/.package/git-2.48.1/bin/git \
+  -DCMAKE_MAKE_PROGRAM="/tool/pandora/.package/ninja-1.12.1/bin/ninja" \
+  -DUSE_IFOE_SS_MODEL=1 \
+  -G "Ninja" \
+  -B builds/linux-ninja-pandora-gcc10-release
+```
+
+#### Configure Debug Build
+
+```bash
+/tool/pandora/.package/cmake-3.30.0/bin/cmake \
+  --preset=linux-ninja-pandora-gcc10 \
+  -S . \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DGIT_EXECUTABLE=/tools/pandora64/.package/git-2.48.1/bin/git \
+  -DCMAKE_MAKE_PROGRAM="/tool/pandora/.package/ninja-1.12.1/bin/ninja" \
+  -DUSE_IFOE_SS_MODEL=1 \
+  -G "Ninja" \
+  -B builds/linux-ninja-pandora-gcc10-debug
+```
+
+**Note**: The only difference between release and debug configurations is the `-DCMAKE_BUILD_TYPE` parameter and the output directory (`-B` parameter).
+
+#### Build
+
+To build a configured build (e.g., debug):
+
+```bash
+/tool/pandora/.package/ninja-1.12.1/bin/ninja -C builds/linux-ninja-pandora-gcc10-debug
+```
+
+#### Packaging
+
+**Create standard zip release**:
+
+```bash
+/tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
+  --project mi450_ifoe \
+  --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-release
+```
+
+The zip file will be created alongside the package script.
+
+**Create directory for rsync deployment** (no zip):
+
+```bash
+/tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
+  --project mi450_ifoe \
+  --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-release \
+  --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging \
+  --output-basename devel \
+  --no-zip
+```
+
+**Note**: The `--output-dir` and `--output-basename` parameters shown are user-specific conventions, not requirements.
+
+---
+
 ## Coding Style Specifics
 
 ### Naming Conventions
