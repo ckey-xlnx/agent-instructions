@@ -116,25 +116,50 @@ To build a configured build (e.g., debug):
 **Create standard zip release**:
 
 ```bash
+# Release build
 /tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
   --project mi450_ifoe \
   --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-release
+
+# Debug build
+/tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
+  --project mi450_ifoe \
+  --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-debug
 ```
 
-The zip file will be created alongside the package script.
+The zip file will be created alongside the package script with a name like:
+- `simnow-linux64-rhel7-gcc10-mi450_ifoe-20251205-daf970901c.zip` (release)
+- `simnow-linux64-rhel7-gcc10-mi450_ifoe-debug-20251204-df22f4ccdf.zip` (debug)
 
-**Create directory for rsync deployment** (no zip):
+**Create directory for iterative development** (rsync deployment, no zip):
+
+For iterative development where builds are rsynced across, use `--no-date --no-sha` instead of `--output-basename`. This creates a consistent directory name with date and SHA fields replaced by zeroes:
 
 ```bash
+# Release build
 /tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
   --project mi450_ifoe \
   --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-release \
   --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging \
-  --output-basename simnow-linux64-rhel7-gcc10-mi450_ifoe-devel \
+  --no-date \
+  --no-sha \
+  --no-zip
+
+# Debug build
+/tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
+  --project mi450_ifoe \
+  --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-debug \
+  --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging \
+  --no-date \
+  --no-sha \
   --no-zip
 ```
 
-**Note**: The `--output-dir` and `--output-basename` parameters shown are user-specific conventions, not requirements.
+This creates directories with names like:
+- `simnow-linux64-rhel7-gcc10-mi450_ifoe-00000000-0000000000` (release)
+- `simnow-linux64-rhel7-gcc10-mi450_ifoe-debug-00000000-0000000000` (debug)
+
+**Note**: The `--output-dir` parameter shown is a user-specific convention, not a requirement.
 
 ---
 
