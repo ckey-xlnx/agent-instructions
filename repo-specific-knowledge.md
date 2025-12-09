@@ -130,7 +130,7 @@ The zip file will be created alongside the package script.
   --project mi450_ifoe \
   --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-release \
   --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging \
-  --output-basename devel \
+  --output-basename simnow-linux64-rhel7-gcc10-mi450_ifoe-devel \
   --no-zip
 ```
 
