@@ -33,6 +33,12 @@ This repository contains instruction files for AI-assisted code review and devel
 - Build systems, CI/CD, and deployment information
 - Operational knowledge that applies across projects
 
+**reporting-instructions.md**
+- AI attribution requirements for external systems (Jira, etc.)
+- Issue creation and comment formatting standards
+- Test issue guidelines
+- Maintains consistency with code commit attribution
+
 ## Usage
 
 - For normal coding tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
@@ -40,3 +46,4 @@ This repository contains instruction files for AI-assisted code review and devel
 - For debugging tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
 - For tool usage mechanics (debuggers, build systems, etc.), reference **agent-tooling-instructions.md**
 - For infrastructure information (Jira instances, service mappings, etc.), reference **infrastructure-knowledge.md**
+- When creating Jira issues or other external reports, reference **reporting-instructions.md**
