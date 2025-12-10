@@ -447,6 +447,76 @@ This creates directories with names like:
 
 When performing automated code reviews, systematically check for these items:
 
+### 0. Reset Hook Ordering and Dependencies
+**Rule**: Reset hooks must respect dependency ordering, especially during FINI phase.
+
+**Key principles**:
+- Reset hooks run in **reverse order** during RESET_PHASE_FINI (higher priority runs first during fini)
+- Components with dependencies should have appropriate priority spacing
+- Always comment on ordering constraints in the code
+- Use 2xx range for reset hook priorities to leave space for future additions
+
+**Dependency examples**:
+- **Event queues (EVQ)** should be destroyed AFTER traffic queues (TXQ/RXQ)
+  - TXQ/RXQ depend on EVQ to function
+  - During teardown: destroy TXQ/RXQ first, then EVQ
+  - Priority: EVQ at 200, TXQ/RXQ at 201 (higher number = runs first during FINI)
+- **Doorbell queue** should be destroyed AFTER RX/TX queues
+  - RX/TX queues depend on doorbell queue
+  - During teardown: destroy RX/TX first, then doorbell queue
+  - Priority: Doorbell at lower number than RX/TX
+
+**Reset hook client type handling**:
+- Each reset hook should only free resources for the specific client_id
+- Do NOT use fallthrough to free resources for other client types
+- The reset framework will call hooks for each affected client separately
+- Example: PF FLR will trigger hooks for VF first, then PF - don't manually handle both
+
+**How to check**:
+- Verify reset hook priorities respect dependencies
+- Check that priorities use 2xx range for spacing
+- Look for comments explaining ordering constraints
+- Ensure no fallthrough logic that frees resources for multiple client types
+- Validate each hook only handles its own client_id's resources
+
+**Example**:
+```c
+✅ CORRECT:
+/* Priority 200: EVQ must be destroyed after TXQ/RXQ (which are at 201) */
+DECLARE_RESET_HOOK(evq_reset, 200, ...)
+
+/* Priority 201: TXQ/RXQ destroyed before EVQ */
+DECLARE_RESET_HOOK(traffic_reset, 201, ...)
+
+// In hook body - only handle this client's resources:
+case MC_CLIENT_TYPE_PF:
+  fini_evq_index(EVQ_PF);  // Only PF's EVQ
+  break;
+case MC_CLIENT_TYPE_VF:
+  fini_evq_index(EVQ_VF);  // Only VF's EVQ
+  break;
+
+❌ INCORRECT:
+DECLARE_RESET_HOOK(evq_reset, 100, ...)  // Priority too low, no spacing
+DECLARE_RESET_HOOK(traffic_reset, 100, ...)  // Same priority as EVQ!
+
+// Don't do this - framework handles VF separately:
+case MC_CLIENT_TYPE_PF:
+  fini_evq_index(EVQ_PF);
+  __attribute__((fallthrough));  // Wrong! Don't free VF resources here
+case MC_CLIENT_TYPE_VF:
+  fini_evq_index(EVQ_VF);
+  break;
+```
+
+**Rationale**: 
+- Proper ordering prevents use-after-free and ensures clean teardown
+- Framework handles multi-client resets automatically
+- Comments document ordering constraints for future maintainers
+- Priority spacing allows future hooks to be inserted
+
+### 1. TODO/FIXME/HACK Markers
+
 ### 1. TODO/FIXME/HACK Markers
 **Rule**: ALL TODO, FIXME, HACK, XXX markers MUST include a Jira ticket reference.
 
