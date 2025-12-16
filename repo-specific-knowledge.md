@@ -40,6 +40,25 @@ This file contains repository-specific knowledge applicable to all development t
 - Revision updates are done by modifying `externals/CMakeLists.txt`
 - The repository is only cloned/updated when building with ifoe_ss_model support
 
+### mpifoe-fw (ifoe-arch-model repository)
+
+**Location**: `external/mpifoe-fw` (subrepo within ifoe-arch-model)
+
+**Purpose**: Main firmware repository that compiles firmware for real silicon (Zephyr RTOS)
+
+**How it's used in ifoe-arch-model**:
+- The IFoE subsystem model doesn't include the management CPU
+- All firmware functionality must run natively on X86 host
+- ifoe-arch-model compiles code from mpifoe-fw to drive the hardware
+- Provides sufficient stubs for Zephyr functionality to make this work
+- Goal: Exercise as much real firmware as possible on subsystem emulation
+- Current scope: Hardware abstraction layer and configuration logic
+
+**Key points**:
+- Standard git submodule
+- Enables testing firmware code without real hardware
+- Simplifies testing and debug by running on host system
+
 ---
 
 ## Build System
@@ -160,6 +179,105 @@ This creates directories with names like:
 - `simnow-linux64-rhel7-gcc10-mi450_ifoe-debug-00000000-0000000000` (debug)
 
 **Note**: The `--output-dir` parameter shown is a user-specific convention, not a requirement.
+
+### ifoe-arch-model Build Configuration
+
+**Repository**: ifoe-arch-model (better named "ifoe-models")
+
+**Primary Purpose**: Contains an architectural model of IFoE
+
+**Secondary Purpose**: Provides glue code so tests using the architectural model API can use the same API when driving:
+- Subsystem emulation (with firmware running to drive emulation)
+- C model wrapper (with firmware running to driver model registers)
+
+**Build tool**: Meson + Ninja (with additional Makefile-based post-processing)
+
+**Usage Patterns**:
+
+The ifoe-arch-model repository is used in two ways:
+1. **With TE (Test Environment)**: To be described in the future
+2. **Semi-standalone on subsystem emulation**: Described below
+
+#### Subsystem Emulation Setup
+
+**Directory structure**:
+- Clone ifoe-arch-model into a copy of a released subsystem emulation model
+- Example path: `/proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z/ifoe-arch-model`
+- Alongside ifoe-arch-model, clone additional repos to replace content within the released model:
+  - `chip` repo at `${MODEL}/chip`
+  - `_ip` repo at `${MODEL}/_ip`
+  - `_env` repo at `${MODEL}/_env`
+- These additional repos have a branch per model release (e.g., `LSE_Design/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z`)
+- ifoe-arch-model follows a normal branch policy
+
+**Key concepts**:
+- The IFoE subsystem model doesn't include the management CPU
+- All firmware functionality runs natively on X86 host
+- Provides sufficient stubs for Zephyr RTOS functionality
+- Goal: Exercise as much real firmware as possible on subsystem emulation
+- Current scope: Hardware abstraction layer and configuration logic
+- Same API works across architectural model, subsystem emulation, and C model
+
+#### Build Process
+
+**Prerequisites**:
+- Must use bash shell (not zsh)
+- Must set up environment before building
+
+**Environment setup**:
+```bash
+# Step 0: Use bash
+/tool/pandora64/bin/bash
+
+# Step 1: Source initialization script
+source /proj/verif_release_ro/cbwa_initscript/current/cbwa_init.bash
+
+# Step 2: Boot environment for emulation
+# ${MODEL} is the path to the subsystem emulation model
+bootenv -u emu_epgm -C ${MODEL}
+```
+
+Example with full path:
+```bash
+bootenv -u emu_epgm -C /proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z
+```
+
+**Build steps** (run from within ifoe-arch-model directory):
+```bash
+# Step 3: Configure with meson
+./etx-meson.sh
+
+# Step 4: Build with ninja
+./etx-ninja.sh
+
+# Step 5: Post-build processing (builds additional libraries)
+./emu-post-ninja.sh
+```
+
+**Build outputs**:
+- `build/src/libs/libdpi.so` - Loaded by emulation software
+- `build/src/apps/emu_eth_to_arch` - Connects emulation ethernet transactor to architecture model copies
+- `build/src/apps/emu_eth_lb` - Loops back traffic from emulation ethernet transactor
+
+#### Rebuild Requirements
+
+**When to rebuild what**:
+
+1. **Meson/Ninja-built code changed**:
+   - Must rerun both: `./etx-ninja.sh` AND `./emu-post-ninja.sh`
+
+2. **Makefile-built libraries changed** (invoked from emu-post-ninja.sh):
+   - Only rerun: `./emu-post-ninja.sh`
+
+3. **Code in _chip, _ip, or _env changed**:
+   - Delete `${MODEL}/build` directory
+   - Rerun: `./emu-post-ninja.sh`
+   - Reason: Proper dependency tracking from those files to `libemu_chip.a` is infeasible
+
+**Important notes**:
+- The build process is convoluted, mixing meson/ninja with Makefiles
+- Dependency tracking is not complete for all components
+- Manual intervention required for certain types of changes
 
 ---
 
