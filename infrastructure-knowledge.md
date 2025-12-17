@@ -54,6 +54,45 @@ search_issues(instance="ontrack_internal", jql="project = FWDEV AND status = Ope
 get_issue(instance="amd", issue_key="DMFPMSN-12345")
 ```
 
+## MCP Server Configuration
+
+### Configuration File Location
+
+The Cline MCP server configuration is located at:
+```
+~/.vscode-server/data/User/globalStorage/slai.claude-dev/settings/cline_mcp_settings.json
+```
+
+### Available MCP Servers
+
+**reviewboard** - ReviewBoard integration
+- Source: `/home/ckey/hg/cline-mcp/reviewboard-server`
+- Provides tools for interacting with ReviewBoard code review system
+- Auto-approved tools: list_review_requests, get_review_request, get_review_diffs, get_diff_content, get_reviews, get_review_comments, get_review_replies, get_diff_files
+
+**jira** - Jira integration
+- Source: `/home/ckey/hg/cline-mcp/jira-server`
+- Provides tools for interacting with multiple Jira instances
+- Auto-approved tools: get_issue
+
+**mcp-cli-exec** - Terminal/CLI command execution
+- Source: `/home/ckey/hg/cline-mcp/mcp-cli-exec`
+- Provides tools for executing shell commands with structured output
+- Tools: cli-exec-raw, cli-exec
+- Timeout: 300 seconds (5 minutes)
+
+### Building MCP Servers
+
+MCP servers in the cline-mcp submodule are TypeScript-based and require compilation:
+
+```bash
+cd /home/ckey/hg/cline-mcp/<server-name>
+npm install
+npm run build
+```
+
+The build output goes to the `build/` directory and is referenced in the MCP configuration.
+
 ## Other Infrastructure Information
 
 (Additional infrastructure knowledge will be added here as needed, such as:
