@@ -4,6 +4,49 @@ This document contains instructions specific to how AI agents should interact wi
 
 ## Cline-Specific Instructions
 
+### Command Execution Tool Preference
+
+**Critical Rule**: For all local command execution, ALWAYS use the MCP `mcp-cli-exec` server instead of the built-in `execute_command` tool.
+
+**Why**: The built-in `execute_command` tool has reliability issues with shell integration that can cause Cline to hang. The `mcp-cli-exec` MCP server provides more reliable command execution.
+
+**Usage**:
+
+For simple commands:
+```xml
+<use_mcp_tool>
+<server_name>mcp-cli-exec</server_name>
+<tool_name>cli-exec-raw</tool_name>
+<arguments>{"command": "ls -la"}</arguments>
+</use_mcp_tool>
+```
+
+For commands in a specific directory:
+```xml
+<use_mcp_tool>
+<server_name>mcp-cli-exec</server_name>
+<tool_name>cli-exec</tool_name>
+<arguments>{
+  "workingDirectory": "/path/to/directory",
+  "commands": "git status"
+}</arguments>
+</use_mcp_tool>
+```
+
+For multiple commands sequentially:
+```xml
+<use_mcp_tool>
+<server_name>mcp-cli-exec</server_name>
+<tool_name>cli-exec</tool_name>
+<arguments>{
+  "workingDirectory": "/path/to/directory",
+  "commands": ["git status", "git log --oneline -5"]
+}</arguments>
+</use_mcp_tool>
+```
+
+**Before using**: Always provide reasoning in `<thinking>` tags explaining why you're using the MCP tool for command execution.
+
 ### GDB (GNU Debugger)
 
 When using GDB, always include the `--batch` flag to prevent interactive paging of output:
