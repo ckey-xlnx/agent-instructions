@@ -2,6 +2,27 @@
 
 This repository contains instruction files for AI-assisted code review and development.
 
+## Workspace Structure Pattern
+
+**IMPORTANT**: This agent-instructions repository is typically listed as the **first folder** in the VSCode workspace, followed by other project folders. However, these folders may be at **completely different filesystem paths** - they are only "siblings" in the VSCode folder list, not on the filesystem.
+
+Example VSCode workspace configuration:
+```
+VSCode Workspace Folders:
+1. /home/ckey/hg/agent-instructions     # This repo (current working directory)
+2. /proj/some_project/ckey/work-repo    # Actual project code (different path!)
+3. /other/path/to/another-project       # Another project (different path!)
+```
+
+**Key implications for task execution:**
+
+1. **Don't assume filesystem proximity**: Other workspace folders are NOT in `..` or any relative path from agent-instructions
+2. **Ask for project location**: When a task involves code outside agent-instructions, ask the user for the full path to the relevant project folder
+3. **Reference these instructions**: While working in other folders (via `cd /full/path && command`), continue to reference the instruction files in this repository
+4. **Current working directory limitation**: Remember you're stuck in `/home/ckey/hg/agent-instructions`, so use full paths and `cd` when working with other workspace folders
+
+When starting a task, if it's unclear whether the work is in agent-instructions or another workspace folder, ask the user to clarify the project location.
+
 ## Instruction Files
 
 **coding-instructions.md**
