@@ -4,13 +4,40 @@ This document contains instructions specific to how AI agents should interact wi
 
 ## Cline-Specific Instructions
 
+### Experimental Features Configuration
+
+Cline has experimental features that should be enabled for optimal performance:
+
+1. **Native Tool Calling (NTC)** - Uses the LLM's native function calling format instead of XML-based tool invocation. Enabled by default since v3.39.0. This affects how the AI model communicates tool requests to Cline.
+
+2. **Background Exec (Terminal Execution Mode)** - Controls how terminal commands are executed:
+   - When enabled: Commands run asynchronously in the background, returning immediately without waiting for shell integration signals
+   - Prevents hanging issues that occurred with VS Code shell integration
+   - Added enhanced features in v3.46.0: command tracking, log file output, zombie process prevention (10-minute timeout), and clickable log paths in UI
+
+**Recommended Settings**: Both features should be enabled for best reliability.
+
 ### Command Execution Tool Preference
 
-**Critical Rule**: For all local command execution, ALWAYS use the MCP `mcp-cli-exec` server instead of the built-in `execute_command` tool.
+**Preference Order** (use the first available option):
 
-**Why**: The built-in `execute_command` tool has reliability issues with shell integration that can cause Cline to hang. The `mcp-cli-exec` MCP server provides more reliable command execution.
+1. **Cline Native `execute_command` with Background Exec** (Preferred) - When "Background Exec" terminal execution mode is enabled, commands run asynchronously in the VS Code terminal and return immediately.
+
+2. **Shell Integration MCP Server (`mcp-cli-exec`)** - Fallback if native execution has issues. Provides reliable command execution via MCP.
+
+3. **VS Code Shell Integration** - Last resort fallback (can hang waiting for completion signals).
 
 **Usage**:
+
+**Option 1: Cline Native (Preferred)**
+```xml
+<execute_command>
+<command>your-command-here</command>
+<requires_approval>false</requires_approval>
+</execute_command>
+```
+
+**Option 2: MCP Shell Integration (Fallback)**
 
 For simple commands:
 ```xml
@@ -45,7 +72,7 @@ For multiple commands sequentially:
 </use_mcp_tool>
 ```
 
-**Before using**: Always provide reasoning in `<thinking>` tags explaining why you're using the MCP tool for command execution.
+**When to use MCP fallback**: Only use the MCP `mcp-cli-exec` server if you encounter issues with the native `execute_command` tool (e.g., hanging, shell integration problems).
 
 ### GDB (GNU Debugger)
 
