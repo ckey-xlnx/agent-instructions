@@ -881,11 +881,86 @@ b) Generic interrupt dispatcher routes to both RAS and packet subsystems
 - Link to relevant documentation where appropriate
 - Include examples of good and bad code when helpful
 
+---
+
+## ASP-FMC Postcode System (FW_STATUS_REG)
+
+### Overview
+
+The ASP (Application Security Processor) reports firmware execution progress through the `FW_STATUS_REG` register. This 32-bit register provides a composite view of the current firmware state across three log levels.
+
+### FW_STATUS_REG Format
+
+The register value has format: `0xAATTSSEE`
+
+| Bits    | Field   | Log Level    | Description              |
+|---------|---------|--------------|--------------------------|
+| 31-24   | `0xAA`  | -            | Fixed FMC domain prefix  |
+| 23-16   | `TT`    | TRACE_LOG    | Current trace/progress   |
+| 15-8    | `SS`    | STATUS_LOG   | Current status           |
+| 7-0     | `EE`    | ERROR_LOG    | Error code (if any)      |
+
+### How Values Are Updated
+
+Each log level updates only its portion of the register:
+- `post_code(code, TRACE_LOG)` → Sets bits 23-16 to `code`, preserves other bits
+- `post_code(code, STATUS_LOG)` → Sets bits 15-8 to `code`, preserves other bits  
+- `post_code(code, ERROR_LOG)` → Sets bits 7-0 to `code`, preserves other bits
+
+### Common Error Codes (bits 7-0)
+
+From `FMC_RETCODE` enum in `common/src/include/fmc_postcode.h`:
+
+| Value | Constant                            | Meaning                           |
+|-------|-------------------------------------|-----------------------------------|
+| 0x00  | `FMC_OK`                            | Success / No error                |
+| 0x01  | `FMC_ERR_GENERIC`                   | Generic error                     |
+| 0x0C  | `FMC_ERR_TIMEOUT`                   | Timeout                           |
+| 0x10  | `FMC_ERR_DATA_CORRUPTION`           | Data corruption                   |
+| 0x19  | `FMC_ERR_CCP_SHA`                   | SHA operation failed              |
+| 0x32  | `FMC_CALIPTRA_ERROR`                | Caliptra error detected           |
+| 0x93  | `FMC_RECOVERY_FW_VALIDATION_FAIL`   | Recovery FW validation failed     |
+| 0xEE  | `FMC_ERR_SOCKET_DOWN_BOOT_OVERFLOW_ERROR` | Boot overflow with socket down |
+
+### Common Trace Codes (bits 23-16)
+
+From `FMC_TRACE` enum showing boot progress:
+
+| Value | Constant                    | Meaning                           |
+|-------|-----------------------------|-----------------------------------|
+| 0x01  | `FMC_LOAD_SUCCESS`          | Stage 1 bootloader started        |
+| 0x02  | `FMC_INIT_LIBROM`           | LIBROM initialization             |
+| 0x04  | `FMC_LOAD_VALIDATE_IMAGE`   | Loading/validating FW image       |
+| 0x08  | `FMC_ART_INIT`              | Initializing ART communication    |
+| 0x0A  | `FMC_PLAT_INIT`             | Platform data initialization      |
+| 0x12  | `FMC_SPI_FLASH_INIT`        | SPI flash directory init          |
+| 0x14  | `FMC_HSP_INIT`              | HSP initialization                |
+| 0x20  | `FMC_MULTI_SOCKET_BOOT`     | Multi-socket boot                 |
+| 0xAA  | `FMC_JUMP_TO_BOOTLOADER`    | Jumping to bootloader             |
+
+### Key Source Files
+
+- **`common/firmware/post_code.h`**: API declarations
+- **`common/firmware/post_code.c`**: Implementation
+- **`common/src/include/fmc_postcode.h`**: Error/trace code enumerations
+
+### Reading the Register
+
+Example interpretation of `FW_STATUS_REG = 0xAA0A0000`:
+- Prefix: `0xAA` (valid FMC postcode)
+- Trace: `0x0A` = `FMC_PLAT_INIT` (platform initialization in progress)
+- Status: `0x00` (no status)
+- Error: `0x00` (no error)
+
+Example of error state `FW_STATUS_REG = 0xAA0A000C`:
+- Trace: `0x0A` = Last trace was platform init
+- Error: `0x0C` = `FMC_ERR_TIMEOUT` (timeout occurred)
+
+---
+
 ## Last Updated
 
-**Date**: 2025-12-08
+**Date**: 2026-01-02
 **Updated by**: Claude
 **Changes**: 
-- Renamed from review-specifics.md to repo-specific-knowledge.md
-- Updated description to cover all development tasks (review, coding, debugging)
-- Added "External Dependencies and Submodules" section with ifoe_ss_model information
+- Added ASP-FMC Postcode System documentation focused on FW_STATUS_REG behavior
