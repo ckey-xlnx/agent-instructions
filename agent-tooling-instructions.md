@@ -20,16 +20,19 @@ Cline has experimental features that should be enabled for optimal performance:
 ### Command Execution Tool Preference
 
 **Preference Order** (use the first available option):
+1. **Build in Background (`execute_command`)** - First preference
+2. **MCP `mcp-cli-exec` server** - Second preference
+3. **VSCode CLI (`execute_command` without background)** - Third preference (fallback only)
 
-1. **Cline Native `execute_command` with Background Exec** (Preferred) - When "Background Exec" terminal execution mode is enabled, commands run asynchronously in the VS Code terminal and return immediately.
+**Rationale**:
+- **Build in Background**: Makes a better job of determining whether user permission is needed for potentially dangerous operations. Provides clearer approval workflows.
+- **MCP `mcp-cli-exec`**: Provides reliable command execution with good structured output handling.
+- **VSCode CLI**: Extremely unreliable. Use only as a last resort fallback when other options are unavailable.
 
-2. **Shell Integration MCP Server (`mcp-cli-exec`)** - Fallback if native execution has issues. Provides reliable command execution via MCP.
+#### Option 1: Build in Background (First Preference)
 
-3. **VS Code Shell Integration** - Last resort fallback (can hang waiting for completion signals).
+Use the `execute_command` tool with `requires_approval` set appropriately. This method has better permission detection for operations that may need user approval.
 
-**Usage**:
-
-**Option 1: Cline Native (Preferred)**
 ```xml
 <execute_command>
 <command>your-command-here</command>
@@ -37,7 +40,7 @@ Cline has experimental features that should be enabled for optimal performance:
 </execute_command>
 ```
 
-**Option 2: MCP Shell Integration (Fallback)**
+#### Option 2: MCP CLI Server (Second Preference)
 
 For simple commands:
 ```xml
@@ -72,7 +75,9 @@ For multiple commands sequentially:
 </use_mcp_tool>
 ```
 
-**When to use MCP fallback**: Only use the MCP `mcp-cli-exec` server if you encounter issues with the native `execute_command` tool (e.g., hanging, shell integration problems).
+#### Option 3: VSCode CLI (Third Preference - Fallback Only)
+
+**Warning**: Extremely unreliable. Only use when options 1 and 2 are unavailable.
 
 ### GDB (GNU Debugger)
 
