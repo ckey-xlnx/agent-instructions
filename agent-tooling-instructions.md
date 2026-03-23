@@ -134,6 +134,33 @@ git log --oneline -10  # Wrong even if output is expected to be short
 git show
 ```
 
+**git add (staging changes)**:
+
+**Critical Rule**: Never use `git add -A`, `git add .`, or `git add --all`. These commands stage all changes in the repository, which can accidentally include untracked files, temporary files, or unrelated changes.
+
+```bash
+# Good - explicitly stage only the files you intend to commit
+git add path/to/specific/file.c
+git add path/to/another/file.h path/to/third/file.c
+
+# Good - stage all tracked files that have been modified (but not untracked files)
+git add -u
+
+# Bad - stages everything including untracked files
+git add -A
+git add .
+git add --all
+```
+
+**Rationale**: Using broad staging commands leads to accidental commits of:
+- Temporary test files
+- Debug scripts
+- Build artifacts
+- Personal configuration files
+- Files from unrelated work in progress
+
+Always review what you're staging and be explicit about which files belong in each commit.
+
 **git rebase -i (interactive rebase)**:
 ```bash
 # Good - programmatically provide rebase instructions
