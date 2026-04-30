@@ -125,6 +125,11 @@ lsf_bsub -q normal -Is -P simnow-perf -R "select[(type==RHEL7_64)] rusage[mem=64
 **Notes**: 
 - The only difference between release and debug configurations is the `-DCMAKE_BUILD_TYPE` parameter and the output directory (`-B` parameter).
 - The `-DCMAKE_CXX_STANDARD=17` flag is required to ensure C++17 is used. SimNow requires C++17 or later, and this flag overrides any cached values that might have been set to an older standard.
+- **Stale cache issues**: If you encounter errors like "target was not found" for OpenSSL::Crypto or similar, delete the build directory and reconfigure:
+  ```bash
+  rm -rf builds/linux-ninja-pandora-gcc10-release  # or -debug
+  ```
+  Then re-run the CMake configure command.
 
 #### Build
 
