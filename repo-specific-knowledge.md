@@ -99,6 +99,7 @@ lsf_bsub -q normal -Is -P simnow-perf -R "select[(type==RHEL7_64)] rusage[mem=64
   --preset=linux-ninja-pandora-gcc10 \
   -S . \
   -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CXX_STANDARD=17 \
   -DGIT_EXECUTABLE=/tools/pandora64/.package/git-2.48.1/bin/git \
   -DCMAKE_MAKE_PROGRAM="/tool/pandora/.package/ninja-1.12.1/bin/ninja" \
   -DUSE_IFOE_SS_MODEL=1 \
@@ -113,6 +114,7 @@ lsf_bsub -q normal -Is -P simnow-perf -R "select[(type==RHEL7_64)] rusage[mem=64
   --preset=linux-ninja-pandora-gcc10 \
   -S . \
   -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_CXX_STANDARD=17 \
   -DGIT_EXECUTABLE=/tools/pandora64/.package/git-2.48.1/bin/git \
   -DCMAKE_MAKE_PROGRAM="/tool/pandora/.package/ninja-1.12.1/bin/ninja" \
   -DUSE_IFOE_SS_MODEL=1 \
@@ -120,7 +122,9 @@ lsf_bsub -q normal -Is -P simnow-perf -R "select[(type==RHEL7_64)] rusage[mem=64
   -B builds/linux-ninja-pandora-gcc10-debug
 ```
 
-**Note**: The only difference between release and debug configurations is the `-DCMAKE_BUILD_TYPE` parameter and the output directory (`-B` parameter).
+**Notes**: 
+- The only difference between release and debug configurations is the `-DCMAKE_BUILD_TYPE` parameter and the output directory (`-B` parameter).
+- The `-DCMAKE_CXX_STANDARD=17` flag is required to ensure C++17 is used. SimNow requires C++17 or later, and this flag overrides any cached values that might have been set to an older standard.
 
 #### Build
 
