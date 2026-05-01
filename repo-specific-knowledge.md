@@ -147,15 +147,17 @@ To build a configured build (e.g., debug):
 # Release build
 /tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
   --project mi450_ifoe \
-  --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-release
+  --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-release \
+  --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging
 
 # Debug build
 /tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
   --project mi450_ifoe \
-  --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-debug
+  --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-debug \
+  --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging
 ```
 
-The zip file will be created alongside the package script with a name like:
+The zip file will be created in the output directory with a name like:
 - `simnow-linux64-rhel7-gcc10-mi450_ifoe-20251205-daf970901c.zip` (release)
 - `simnow-linux64-rhel7-gcc10-mi450_ifoe-debug-20251204-df22f4ccdf.zip` (debug)
 
