@@ -892,6 +892,87 @@ b) Generic interrupt dispatcher routes to both RAS and packet subsystems
 
 ---
 
+## ASP (amd-tee3.0) Firmware Build Process
+
+### Overview
+
+The ASP (Application Security Processor) firmware lives in the `amd-tee3.0` repository. It's built with the PSP RISC-V toolchain.
+
+**Repository Location**: `/proj/smartnic/xcb/ckey/ifoe-fw/amd-tee3.0`
+
+### Prerequisites
+
+1. **PSP Security Tools**: 
+   ```bash
+   # Clone from: ssh://ckey@git.amd.com:29418/sw_security/er/tools
+   # The repo was renamed to sw-security-tools
+   # Expected location: /proj/smartnic/xcb/ckey/ifoe-fw/sw-security-tools
+   ```
+
+2. **RISC-V Toolchain**: The official PSP toolchain (not Zephyr SDK)
+   - Expected location: `${PSP_TOOLS_DIR}/../toolchain/riscv/linux/riscv32-toolchain-linux/bin/`
+   - Required ABI: `-march=rv32imafc -mabi=ilp32f` (single-float)
+   - **Note**: The Zephyr SDK's `riscv64-zephyr-elf` has ABI mismatch (soft-float vs single-float)
+
+3. **Git Submodules**: Initialize before building
+   ```bash
+   cd /proj/smartnic/xcb/ckey/ifoe-fw/amd-tee3.0
+   git submodule update --init --recursive
+   ```
+
+### Build Commands
+
+**Build for MI450 (drv_preesid)**:
+```bash
+cd /proj/smartnic/xcb/ckey/ifoe-fw/amd-tee3.0/amd_tee_dr/drv_preesid
+PSP_TOOLS_DIR=/proj/smartnic/xcb/ckey/ifoe-fw/sw-security-tools BUILD=MI450 make
+```
+
+**Supported build targets**: 
+- `MI450`, `AT2`, `ARCD` (DGPU)
+- `WH`, `RH` (CPU)
+- `MTP` (Workstation)
+- `MDS1`, `OLR` (APU)
+
+### Output Location
+
+Build artifacts are placed in:
+- `obj/${BUILD}/` - Object files
+- `bin/` - Final binary (e.g., `TypeId0x6A_drv_preesid_MI450.bin`)
+
+### Key Source Files for P2P Sync
+
+The P2PSync code that handles multi-socket coordination:
+- **Main implementation**: `amd_tee_ddk/shared_src/p2p_sync/p2p_sync.c`
+- **Macros**: `amd_tee_ddk/inc/multicore_chiplet_defines.h` (GET_TOTAL_NODES, IS_MULTI_NODE)
+
+### Integration into SimNow
+
+**Important**: ASP firmware is NOT the same as mpifoe FW:
+- **mpifoe FW** (`mpifoe_fw.bin/.hbin`): Runs on IFoE management CPU (Zephyr RTOS), merged with `ifwi-bosh`
+- **ASP FW** (`drv_preesid`): Runs on PSP/ASP secure processor, built into IFWI at AGESA build time
+
+**For ASP firmware changes** (like P2PSync):
+1. The ASP firmware is baked into the IFWI image during AGESA/BIOS build
+2. Cannot be replaced at SimNow launch time like mpifoe FW
+3. Requires rebuilding the full IFWI with modified ASP components
+
+**For mpifoe FW changes**:
+```bash
+# The simnow-launch script handles this automatically when using .hbin:
+$SIMNOW_SHARED/IFWI/ifwi-bosh $IFWI $FWNAME $SIMNOW_WORKDIR/IFWI.boshed.sbin
+```
+
+### Known Issues
+
+**Zephyr SDK Incompatibility**: The Zephyr SDK's RISC-V toolchain cannot be used directly for ASP firmware due to ABI mismatch:
+```
+error: can't link soft-float modules with single-float modules
+```
+Solution: Use the official PSP RISC-V toolchain from the sw-security-tools repository.
+
+---
+
 ## ASP-FMC Postcode System (FW_STATUS_REG)
 
 ### Overview
