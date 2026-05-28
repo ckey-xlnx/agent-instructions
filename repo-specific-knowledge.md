@@ -86,8 +86,8 @@ All build commands must be run on a build server. To set up an interactive build
 # Source the environment initialization script
 source /proj/verif_release_ro/cbwa_initscript/current/cbwa_init.bash
 
-# Submit interactive LSF job to build server
-lsf_bsub -q normal -Is -P simnow-perf -R "select[(type==RHEL7_64)] rusage[mem=64000]" /tool/pandora64/bin/bash
+# Submit interactive LSF job to build server (RHEL8)
+lsf_bsub -q normal -Is -P simnow-perf -R "select[(type==RHEL8_64)] rusage[mem=64000]" /tool/pandora64/bin/bash
 
 # Now you're on the build server and can run build commands
 ```
@@ -158,8 +158,8 @@ To build a configured build (e.g., debug):
 ```
 
 The zip file will be created in the output directory with a name like:
-- `simnow-linux64-rhel7-gcc10-mi450_ifoe-20251205-daf970901c.zip` (release)
-- `simnow-linux64-rhel7-gcc10-mi450_ifoe-debug-20251204-df22f4ccdf.zip` (debug)
+- `simnow-linux64-rhel8-gcc10-mi450_ifoe-20251205-daf970901c.zip` (release)
+- `simnow-linux64-rhel8-gcc10-mi450_ifoe-debug-20251204-df22f4ccdf.zip` (debug)
 
 **Create directory for iterative development** (rsync deployment, no zip):
 
@@ -186,8 +186,8 @@ For iterative development where builds are rsynced across, use `--no-date --no-s
 ```
 
 This creates directories with names like:
-- `simnow-linux64-rhel7-gcc10-mi450_ifoe-00000000-0000000000` (release)
-- `simnow-linux64-rhel7-gcc10-mi450_ifoe-debug-00000000-0000000000` (debug)
+- `simnow-linux64-rhel8-gcc10-mi450_ifoe-00000000-0000000000` (release)
+- `simnow-linux64-rhel8-gcc10-mi450_ifoe-debug-00000000-0000000000` (debug)
 
 **Note**: The `--output-dir` parameter shown is a user-specific convention, not a requirement.
 
