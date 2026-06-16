@@ -17,6 +17,18 @@ without them.
 | Perform a code review                        | `review-instructions.md`                                                               |
 | Edit any file in `agent-instructions/`       | This file (`agent-instructions/.clinerules`) — read it in full before making changes   |
 
+## Before You Act — Mandatory Action Gates
+
+In addition to the reading gates above, certain conditions require a mandatory **action** before making any tool call. These are not advisory — they are hard requirements:
+
+| If this condition is true...                                  | You MUST perform this action before any tool call                                                          |
+|---------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| `execute_command` is in "VSCode Terminal" mode (detected from system prompt) | Output the warning text **verbatim** in your response — see `agent-tooling-instructions.md` § Mode: "VSCode Terminal" |
+
+**How to detect VSCode Terminal mode**: Your system prompt will contain the phrase *"commands are run in the user's VSCode terminal"* in the `execute_command` tool description. If it does, you are in VSCode Terminal mode and MUST output the warning before your first tool call.
+
+**What "output verbatim" means**: The warning must appear as literal visible text in your reply to the user. It is not enough to have read this instruction. The warning text must be present in the actual response the user sees.
+
 ## Workspace Structure Pattern
 
 **IMPORTANT**: This agent-instructions repository is typically listed as the **first folder** in the VSCode workspace, followed by other project folders. However, these folders may be at **completely different filesystem paths** - they are only "siblings" in the VSCode folder list, not on the filesystem.

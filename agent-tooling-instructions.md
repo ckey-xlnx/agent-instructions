@@ -45,9 +45,16 @@ Use `execute_command` directly. Set `requires_approval` appropriately (true for 
 
 #### Mode: "VSCode Terminal" — `execute_command` is broken
 
-**Do not use `execute_command`.** Warn the user at the start of the session:
+**MANDATORY OUTPUT — This step cannot be skipped, deferred, or summarised.**
 
-> ⚠️ **Warning**: Cline's `execute_command` tool is set to "VSCode Terminal" mode, which is known to be broken and unreliable. Command execution will fall back to the `mcp-cli-exec` MCP server. Please switch Cline's terminal execution mode to "Background Exec" in the Cline settings.
+You MUST output the following warning block **verbatim** as **visible text in your response to the user**, before making any tool call in this session. Reading this instruction is not sufficient — the warning must literally appear in your reply. If you are about to make a tool call and have not yet output this text in the current session, **stop and output it now, then proceed**:
+
+---
+⚠️ **Warning**: Cline's `execute_command` tool is set to "VSCode Terminal" mode, which is known to be broken and unreliable. Command execution will fall back to the `mcp-cli-exec` MCP server. Please switch Cline's terminal execution mode to "Background Exec" in the Cline settings.
+
+---
+
+Only after the above warning has appeared in your response may you proceed. Do not use `execute_command`.
 
 Then use the **MCP `mcp-cli-exec` server** for all command execution:
 
