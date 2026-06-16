@@ -25,10 +25,11 @@ There are exactly two tools available for running shell commands:
 
 ### Determining the Active `execute_command` Mode
 
-The active mode is snapshotted at session start and does not change during a session. It is reflected in your system prompt — look at how `execute_command` is described:
+The active mode is snapshotted at session start and does not change during a session.
 
-- **Background Exec mode**: The system prompt will describe the tool with language about background execution, async behaviour, log files, or similar.
-- **VSCode Terminal mode**: The system prompt will describe the tool with language such as *"commands are run in the user's VSCode terminal"*.
+**Important**: There is no reliable way to detect the active mode from your system prompt — the text is identical in both modes. The phrase *"commands are run in the user's VSCode terminal"* appears in both Background Exec and VSCode Terminal modes and cannot be used as a discriminator.
+
+**Default assumption**: Assume Background Exec is active. Use `execute_command` directly. If commands hang or fail silently, see "Mode: VSCode Terminal — Recovery" below.
 
 ### What To Do Based on the Active Mode
 
@@ -43,20 +44,18 @@ Use `execute_command` directly. Set `requires_approval` appropriately (true for 
 </execute_command>
 ```
 
-#### Mode: "VSCode Terminal" — `execute_command` is broken
+#### Mode: "VSCode Terminal" — Recovery if commands hang
 
-**MANDATORY OUTPUT — This step cannot be skipped, deferred, or summarised.**
+Since there is no reliable way to detect VSCode Terminal mode pre-emptively, you will only discover you are in this mode if commands start hanging or failing silently.
 
-You MUST output the following warning block **verbatim** as **visible text in your response to the user**, before making any tool call in this session. Reading this instruction is not sufficient — the warning must literally appear in your reply. If you are about to make a tool call and have not yet output this text in the current session, **stop and output it now, then proceed**:
-
----
-⚠️ **Warning**: Cline's `execute_command` tool is set to "VSCode Terminal" mode, which is known to be broken and unreliable. Command execution will fall back to the `mcp-cli-exec` MCP server. Please switch Cline's terminal execution mode to "Background Exec" in the Cline settings.
+**If a command hangs or produces no output**, output this message to the user:
 
 ---
+⚠️ **Warning**: A command appears to have hung. This likely means Cline's terminal execution mode is set to "VSCode Terminal" rather than "Background Exec". Since this mode is snapshotted at session start, changing the setting now won't take effect until a new session. I'll switch to the `mcp-cli-exec` server for the rest of this session. Please start a new Cline session after enabling "Background Exec" in Cline settings.
 
-Only after the above warning has appeared in your response may you proceed. Do not use `execute_command`.
+---
 
-Then use the **MCP `mcp-cli-exec` server** for all command execution:
+Then use the **MCP `mcp-cli-exec` server** for all remaining commands in this session. Do not use `execute_command` again for the rest of the session.
 
 For simple commands:
 ```xml

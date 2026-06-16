@@ -23,11 +23,7 @@ In addition to the reading gates above, certain conditions require a mandatory *
 
 | If this condition is true...                                  | You MUST perform this action before any tool call                                                          |
 |---------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-| `execute_command` is in "VSCode Terminal" mode (detected from system prompt) | Output the warning text **verbatim** in your response — see `agent-tooling-instructions.md` § Mode: "VSCode Terminal" |
-
-**How to detect VSCode Terminal mode**: Your system prompt will contain the phrase *"commands are run in the user's VSCode terminal"* in the `execute_command` tool description. If it does, you are in VSCode Terminal mode and MUST output the warning before your first tool call.
-
-**What "output verbatim" means**: The warning must appear as literal visible text in your reply to the user. It is not enough to have read this instruction. The warning text must be present in the actual response the user sees.
+| *(no conditions currently defined)*                           | N/A                                                                                                        |
 
 ## Workspace Structure Pattern
 
