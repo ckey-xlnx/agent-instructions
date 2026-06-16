@@ -7,7 +7,7 @@ This document describes the process for partially automating feedback on review 
 1. **Summary of pending reviews** - Quick overview of reviews meeting specific criteria
 2. **Detailed analysis** - In-depth review with suggested comments and controversy flags
 3. **Interactive feedback submission** - Guided process for leaving review comments
-4. **Learning from feedback** - Suggestions for updating review-specifics.md based on actual feedback patterns
+4. **Learning from feedback** - Suggestions for updating repo-specific-knowledge.md based on actual feedback patterns
 
 ## Process Flow
 
@@ -46,7 +46,7 @@ Status: [pending/submitted]
 **Analysis sources** (in priority order):
 1. `coding-instructions.md` - General coding and commit practices
 2. `review-instructions.md` - This document describing the review process
-3. `review-specifics.md` - Repository-specific style, architecture, and priorities
+3. `repo-specific-knowledge.md` - Repository-specific style, architecture, and priorities
 
 **Analysis steps**:
 
@@ -83,7 +83,7 @@ Status: [pending/submitted]
    - Verify whitespace rules (no trailing whitespace, empty blank lines)
    - Assess commit size and logical separation
    - Check for unexplained design deviations
-   - Verify repository-specific style from review-specifics.md
+   - Verify repository-specific style from repo-specific-knowledge.md
    - Look for common bug patterns (memory leaks, pointer issues, missing checks)
    - Assess code clarity and maintainability
 
@@ -93,7 +93,7 @@ Status: [pending/submitted]
    - Deviations from established patterns without justification
    - Complex refactoring affecting multiple subsystems
    - Changes to critical paths (memory management, hardware interfaces)
-   - Conflicts with repository-specific priorities in review-specifics.md
+   - Conflicts with repository-specific priorities in repo-specific-knowledge.md
    - Existing review comments indicate disagreement
    - Changes that appear to violate design intent
 
@@ -284,7 +284,7 @@ AI-review-reviewed-by: Claude
 
 ### D. Learning from Feedback
 
-**Purpose**: Improve review-specifics.md based on actual feedback patterns.
+**Purpose**: Improve repo-specific-knowledge.md based on actual feedback patterns.
 
 **Data sources**:
 1. Feedback submitted through the tool (step C)
@@ -300,12 +300,12 @@ AI-review-reviewed-by: Claude
 
 2. **Gap identification**:
    - Find issues caught in reviews but not in automated analysis
-   - Identify missing rules in review-specifics.md
+   - Identify missing rules in repo-specific-knowledge.md
    - Detect outdated guidance that no longer applies
 
 3. **Suggestion generation**:
    ```
-   === Suggested Updates to review-specifics.md ===
+   === Suggested Updates to repo-specific-knowledge.md ===
    
    Based on 15 reviews over the past 2 weeks:
    
@@ -333,7 +333,7 @@ AI-review-reviewed-by: Claude
 4. **Update workflow**:
    - Present suggestions for review
    - Allow acceptance/rejection/editing of each suggestion
-   - Generate updated review-specifics.md content
+   - Generate updated repo-specific-knowledge.md content
    - Optionally create a commit with the changes
 
 **Learning frequency**:
@@ -343,9 +343,9 @@ AI-review-reviewed-by: Claude
 
 ## Configuration
 
-### Review Specifics Structure
+### Repository-Specific Knowledge Structure
 
-Each repository should have a review-specifics.md file containing:
+Each repository should have a repo-specific-knowledge.md file containing:
 
 1. **Repository identification**
    - Name and purpose
@@ -410,7 +410,7 @@ When analyzing a review request, always check for existing reviews and their com
 
 ### For Automated Analysis
 - Always read all three instruction files before analysis
-- Consider repository context from review-specifics.md
+- Consider repository context from repo-specific-knowledge.md
 - Flag uncertainty - better to ask than assume
 - Provide specific line numbers and file paths
 - Quote actual code in suggestions
@@ -428,7 +428,7 @@ When analyzing a review request, always check for existing reviews and their com
 - Look for patterns across multiple reviews
 - Don't over-fit to individual cases
 - Suggest rules that are actionable and verifiable
-- Keep review-specifics.md focused and practical
+- Keep repo-specific-knowledge.md focused and practical
 
 ## Privacy and Security
 
