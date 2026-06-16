@@ -6,32 +6,35 @@ This document contains instructions specific to how AI agents should interact wi
 
 ### Experimental Features Configuration
 
-Cline has experimental features that should be enabled for optimal performance:
+Cline has two notable experimental features:
 
-1. **Native Tool Calling (NTC)** - Uses the LLM's native function calling format instead of XML-based tool invocation. Enabled by default since v3.39.0. This affects how the AI model communicates tool requests to Cline.
+1. **Native Tool Calling (NTC)** — Uses the LLM's native function calling format instead of XML-based tool invocation. Enabled by default since v3.39.0. This is purely about how tool call *syntax* is formatted; it has no bearing on how commands are executed.
 
-2. **Background Exec (Terminal Execution Mode)** - Controls how terminal commands are executed:
-   - When enabled: Commands run asynchronously in the background, returning immediately without waiting for shell integration signals
-   - Prevents hanging issues that occurred with VS Code shell integration
-   - Added enhanced features in v3.46.0: command tracking, log file output, zombie process prevention (10-minute timeout), and clickable log paths in UI
+2. **Background Exec (Terminal Execution Mode)** — A GUI setting that controls how the built-in `execute_command` tool runs commands. There are two possible modes:
+   - **"Background Exec"** (recommended): Commands run asynchronously in the background, returning immediately. Avoids VS Code shell integration issues. Features added in v3.46.0: command tracking, log file output, zombie process prevention (10-minute timeout), clickable log paths in UI.
+   - **"VSCode Terminal"**: Commands run via VS Code's terminal/shell integration. **This mode is broken and unreliable — do not use it.**
 
-**Recommended Settings**: Both features should be enabled for best reliability.
+**Recommended Settings**: Both NTC and Background Exec should be enabled.
 
-### Command Execution Tool Preference
+### Command Execution: Two Tools
 
-**Preference Order** (use the first available option):
-1. **Build in Background (`execute_command`)** - First preference
-2. **MCP `mcp-cli-exec` server** - Second preference
-3. **VSCode CLI (`execute_command` without background)** - Third preference (fallback only)
+There are exactly two tools available for running shell commands:
 
-**Rationale**:
-- **Build in Background**: Makes a better job of determining whether user permission is needed for potentially dangerous operations. Provides clearer approval workflows.
-- **MCP `mcp-cli-exec`**: Provides reliable command execution with good structured output handling.
-- **VSCode CLI**: Extremely unreliable. Use only as a last resort fallback when other options are unavailable.
+1. **`execute_command`** — Cline's built-in tool. Its behaviour depends entirely on which sub-mode is active (see below).
+2. **MCP `mcp-cli-exec` server** — A separate MCP server providing reliable command execution. Use this when `execute_command` is not usable.
 
-#### Option 1: Build in Background (First Preference)
+### Determining the Active `execute_command` Mode
 
-Use the `execute_command` tool with `requires_approval` set appropriately. This method has better permission detection for operations that may need user approval.
+The active mode is snapshotted at session start and does not change during a session. It is reflected in your system prompt — look at how `execute_command` is described:
+
+- **Background Exec mode**: The system prompt will describe the tool with language about background execution, async behaviour, log files, or similar.
+- **VSCode Terminal mode**: The system prompt will describe the tool with language such as *"commands are run in the user's VSCode terminal"*.
+
+### What To Do Based on the Active Mode
+
+#### Mode: "Background Exec" — `execute_command` is working correctly
+
+Use `execute_command` directly. Set `requires_approval` appropriately (true for potentially dangerous/destructive operations, false for safe ones).
 
 ```xml
 <execute_command>
@@ -40,7 +43,13 @@ Use the `execute_command` tool with `requires_approval` set appropriately. This 
 </execute_command>
 ```
 
-#### Option 2: MCP CLI Server (Second Preference)
+#### Mode: "VSCode Terminal" — `execute_command` is broken
+
+**Do not use `execute_command`.** Warn the user at the start of the session:
+
+> ⚠️ **Warning**: Cline's `execute_command` tool is set to "VSCode Terminal" mode, which is known to be broken and unreliable. Command execution will fall back to the `mcp-cli-exec` MCP server. Please switch Cline's terminal execution mode to "Background Exec" in the Cline settings.
+
+Then use the **MCP `mcp-cli-exec` server** for all command execution:
 
 For simple commands:
 ```xml
@@ -74,10 +83,6 @@ For multiple commands sequentially:
 }</arguments>
 </use_mcp_tool>
 ```
-
-#### Option 3: VSCode CLI (Third Preference - Fallback Only)
-
-**Warning**: Extremely unreliable. Only use when options 1 and 2 are unavailable.
 
 ### GDB (GNU Debugger)
 
