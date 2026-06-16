@@ -2,6 +2,21 @@
 
 This repository contains instruction files for AI-assisted code review and development.
 
+## Before You Act — Mandatory Reading Gates
+
+These are **hard gates**. You MUST read the specified material before performing the described
+action. Do not treat these as advisory — they exist because these rules are frequently violated
+without them.
+
+| Before you do this...                        | You MUST first read                                                                    |
+|----------------------------------------------|----------------------------------------------------------------------------------------|
+| Execute ANY CLI command or MCP tool call     | `agent-tooling-instructions.md` §§ Cline-Specific Instructions, Command Execution: Two Tools |
+| Use any `git` command                        | `agent-tooling-instructions.md` § Git Commands                                         |
+| Create or comment on a Jira issue            | `reporting-instructions.md` § AI Attribution Requirements                              |
+| Write, amend, or commit code                 | `coding-instructions.md` §§ Commit Message Structure, Whitespace Rules                 |
+| Perform a code review                        | `review-instructions.md`                                                               |
+| Edit any file in `agent-instructions/`       | This file (`agent-instructions/.clinerules`) — read it in full before making changes   |
+
 ## Workspace Structure Pattern
 
 **IMPORTANT**: This agent-instructions repository is typically listed as the **first folder** in the VSCode workspace, followed by other project folders. However, these folders may be at **completely different filesystem paths** - they are only "siblings" in the VSCode folder list, not on the filesystem.
