@@ -54,6 +54,7 @@ VSCode Workspace Folders:
 2. **Primary working directory is the first folder**: The session's CWD is the first workspace folder (from `vscode-workspaces`), not agent-instructions
 3. **Reference these instructions**: While working in other folders (via full paths), continue to reference the instruction files in this repository
 4. **Use full paths**: Always use absolute paths when referring to files in any workspace folder
+5. **Session temporary files belong in the first folder**: Any files created during a session for task-coordination purposes (e.g. a Markdown file defining a task, a scratch file, a temporary plan) should be placed in the first workspace folder, not in a code repo or in agent-instructions
 
 When starting a task, if it's unclear which folder the work should be done in, check the environment details for the "Primary workspace" hint or ask the user to clarify.
 
