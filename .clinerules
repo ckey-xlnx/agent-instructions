@@ -31,24 +31,31 @@ In addition to the reading gates above, certain conditions require a mandatory *
 
 ## Workspace Structure Pattern
 
-**IMPORTANT**: This agent-instructions repository is typically listed as the **first folder** in the VSCode workspace, followed by other project folders. However, these folders may be at **completely different filesystem paths** - they are only "siblings" in the VSCode folder list, not on the filesystem.
+**IMPORTANT**: The VSCode workspace follows a consistent ordering pattern, but these folders may be at **completely different filesystem paths** — they are only "siblings" in the VSCode folder list, not on the filesystem.
+
+The standard folder ordering is:
+
+1. **First folder**: A workspace folder from within the `vscode-workspaces` repository. This is the primary working directory for the session and contains the `.code-workspace` file that defines the workspace.
+2. **Second folder**: This `agent-instructions` repository.
+3. **Remaining folders**: Code repositories that are the subject of the current task.
 
 Example VSCode workspace configuration:
 ```
 VSCode Workspace Folders:
-1. /home/ckey/hg/agent-instructions     # This repo (current working directory)
-2. /proj/some_project/ckey/work-repo    # Actual project code (different path!)
-3. /other/path/to/another-project       # Another project (different path!)
+1. /home/ckey/hg/vscode-workspaces/xcb/some-workspace    # Workspace folder (primary working directory)
+2. /home/ckey/hg/agent-instructions                       # This repo (instructions)
+3. /proj/some_project/ckey/work-repo                      # Actual project code (different path!)
+4. /other/path/to/another-project                         # Another project (different path!)
 ```
 
 **Key implications for task execution:**
 
-1. **Don't assume filesystem proximity**: Other workspace folders are NOT in `..` or any relative path from agent-instructions
-2. **Ask for project location**: When a task involves code outside agent-instructions, ask the user for the full path to the relevant project folder
-3. **Reference these instructions**: While working in other folders (via `cd /full/path && command`), continue to reference the instruction files in this repository
-4. **Current working directory limitation**: Remember you're stuck in `/home/ckey/hg/agent-instructions`, so use full paths and `cd` when working with other workspace folders
+1. **Don't assume filesystem proximity**: Workspace folders are NOT siblings on the filesystem — they are only grouped in the VSCode folder list
+2. **Primary working directory is the first folder**: The session's CWD is the first workspace folder (from `vscode-workspaces`), not agent-instructions
+3. **Reference these instructions**: While working in other folders (via full paths), continue to reference the instruction files in this repository
+4. **Use full paths**: Always use absolute paths when referring to files in any workspace folder
 
-When starting a task, if it's unclear whether the work is in agent-instructions or another workspace folder, ask the user to clarify the project location.
+When starting a task, if it's unclear which folder the work should be done in, check the environment details for the "Primary workspace" hint or ask the user to clarify.
 
 ## Instruction Files
 
