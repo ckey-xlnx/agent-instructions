@@ -23,7 +23,28 @@ In addition to the reading gates above, certain conditions require a mandatory *
 
 | If this condition is true...                                  | You MUST perform this action before any tool call                                                          |
 |---------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-| *(no conditions currently defined)*                           | N/A                                                                                                        |
+| The task is a **verification task** (see below)              | Read the "Verification Tasks" section below before taking any action                                       |
+
+## Verification Tasks — Hard Rule
+
+A **verification task** is any task using language such as: "prove", "check", "verify",
+"demonstrate", "confirm", "iterate through and [check/prove/show]", "validate", "test".
+
+**You MUST NOT make any changes when performing a verification task.**
+
+When performing a verification task:
+
+1. **Report findings only.** Do not fix, amend, or alter anything you discover.
+2. If a failure or bug is found, **stop and report it explicitly**, including:
+   - What failed and why (root cause)
+   - What the fix would be
+3. Then **ask the user whether to apply the fix** before taking any action.
+
+The user may have reasons not to fix immediately (different ticket scope, pre-existing
+issue, wants to triage first). Acting unilaterally removes their ability to decide.
+
+❌ Wrong: discover failure → fix it → mention the change afterwards
+✅ Correct: discover failure → report it → ask permission → fix only if authorised
 
 ## Workspace Structure Pattern
 
