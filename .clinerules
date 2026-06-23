@@ -112,6 +112,16 @@ When starting a task, if it's unclear which folder the work should be done in, c
 - Test issue guidelines
 - Maintains consistency with code commit attribution
 
+**operational-knowledge.md**
+- Operational/administrative tasks: installing releases, managing artifacts, deploying software
+- Weakly repo-associated tasks that are not primarily about building or developing code
+- Examples: SimNow release installation, artifact management
+
+**workflow-knowledge.md**
+- End-to-end multi-component workflows spanning multiple repositories or artifacts
+- Examples: launching SimNow, connecting the arch model, running diagnostics, collecting results
+- Consult alongside repo-specific-knowledge.md and operational-knowledge.md as needed
+
 ## Usage
 
 - For normal coding tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
@@ -120,3 +130,5 @@ When starting a task, if it's unclear which folder the work should be done in, c
 - For tool usage mechanics (debuggers, build systems, etc.), reference **agent-tooling-instructions.md**
 - For infrastructure information (Jira instances, service mappings, etc.), reference **infrastructure-knowledge.md**
 - When creating Jira issues or other external reports, reference **reporting-instructions.md**
+- For operational/admin tasks (release installation, artifact management), reference **operational-knowledge.md**
+- For end-to-end multi-component workflows, reference **workflow-knowledge.md**
