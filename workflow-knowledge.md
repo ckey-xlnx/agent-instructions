@@ -82,4 +82,118 @@ AMD device ID `1747` is the IFoE device. Its presence confirms successful enumer
 
 `scripts/simnow-launch/sim222.IFoE_link_0_to_1.sh` in the `mpifoe-fw` repo (`origin/main`). The `--slt` flag was added in IFOESW-1254.
 
+#### Register bodges required before launching QEMU
+
+After SimNow reaches steady state (`0x800f0000`) but **before** launching QEMU, a set of `mid_cf` register writes must be applied. These unlock MMIO access needed by the diags test.
+
+These are applied interactively via the SimNow console (SimNow continues running — no Ctrl-C needed):
+
+```
+mid_cf:0.write 0x00001200 0x8000000F
+mid_cf:0.write 0x00896000 0x8000000F
+mid_cf:0.write 0x00896400 0x8000000F
+mid_cf:0.write 0x00896800 0x8000000F
+mid_cf:0.write 0x00896C00 0x8000000F
+mid_cf:0.write 0x00897000 0x8000000F
+mid_cf:0.write 0x00897400 0x8000000F
+mid_cf:0.write 0x00897800 0x8000000F
+mid_cf:0.write 0x00897C00 0x8000000F
+mid_cf:0.write 0x00898000 0x8000000F
+mid_cf:0.write 0x00898400 0x8000000F
+mid_cf:0.write 0x00898800 0x8000000F
+mid_cf:0.write 0x00898C00 0x8000000F
+mid_cf:0.write 0x00899000 0x8000000F
+mid_cf:0.write 0x00899400 0x8000000F
+mid_cf:0.write 0x00899800 0x8000000F
+mid_cf:0.write 0x00899C00 0x8000000F
+mid_cf:0.write 0x0089A000 0x8000000F
+mid_cf:1.write 0x00001200 0x8000000F
+mid_cf:1.write 0x00896000 0x8000000F
+mid_cf:1.write 0x00896400 0x8000000F
+mid_cf:1.write 0x00896800 0x8000000F
+mid_cf:1.write 0x00896C00 0x8000000F
+mid_cf:1.write 0x00897000 0x8000000F
+mid_cf:1.write 0x00897400 0x8000000F
+mid_cf:1.write 0x00897800 0x8000000F
+mid_cf:1.write 0x00897C00 0x8000000F
+mid_cf:1.write 0x00898000 0x8000000F
+mid_cf:1.write 0x00898400 0x8000000F
+mid_cf:1.write 0x00898800 0x8000000F
+mid_cf:1.write 0x00898C00 0x8000000F
+mid_cf:1.write 0x00899000 0x8000000F
+mid_cf:1.write 0x00899400 0x8000000F
+mid_cf:1.write 0x00899800 0x8000000F
+mid_cf:1.write 0x00899C00 0x8000000F
+mid_cf:1.write 0x0089A000 0x8000000F
+```
+
+Each write should be acknowledged with `CF Access OK on SMN Addr 0x...`.
+
+When done, send `go` to resume SimNow, then launch QEMU.
+
+---
+
+### Running the SLT Diags Test
+
+#### Two devices in the VM
+
+Inside the QEMU VM, two AMD PCI devices are relevant:
+
+| Device ID | Description | Used by |
+|-----------|-------------|---------|
+| `75c1` (`04:00.0`) | GPU device | `tng_executor --location` |
+| `1747` (`04:00.1`) | IFoE device | `xncmdclient tlp=0` |
+
+Find the GPU device address dynamically:
+
+```bash
+lspci -d :75c1 -D | awk '{print $1}'
+```
+
+#### Step 1: IFoE firmware configuration via xncmdclient
+
+A setup script will be committed to `mpifoe-fw` (not yet merged at time of writing). It configures the IFoE firmware through the `xncmdclient` tool, which targets the IFoE device via `tlp=0`:
+
+```sh
+#!/bin/sh
+XNCMDCLIENT="/simnow/xncmdclient --force-enable-mmap"
+$XNCMDCLIENT -c "ifoe_bios 4x200 0 ffc003ff f; quit" tlp=0
+$XNCMDCLIENT -c "ifoe_next_phase PROVIDER; quit" tlp=0
+$XNCMDCLIENT -c "ifoe_cfg BAREMETAL ETHERNET DISABLED IFOE; quit" tlp=0
+$XNCMDCLIENT -c "ifoe_active_accelerators 0xffffffff 0xffffffff 0xff 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0; quit" tlp=0
+$XNCMDCLIENT -c "ifoe_identity 0; quit" tlp=0
+$XNCMDCLIENT -c "ifoe_next_phase TENANT; quit" tlp=0
+$XNCMDCLIENT -c "ifoe_enabled_accelerators 0x3 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0; quit" tlp=0
+$XNCMDCLIENT -c "ifoe_next_phase SHOWTIME; quit" tlp=0
+```
+
+#### Step 2: Run the diags test
+
+```bash
+cd /simnow/diags/diag_tng-535f67186d25dbc2d621f1ed27b1cdd197dfe55c
+GPU_ADDR=$(lspci -d :75c1 -D | awk '{print $1}')
+./package/tng_executor \
+    --location ${GPU_ADDR} \
+    @package/suites/mi450/slt/soc/bu_config_vm.opt \
+    @package/suites/mi450/slt/soc/bu_config.opt \
+    -c @/home/ckey/diags/die_full_config-cjk.json \
+    -c +/diag/mi450/npa/gpuId=1 \
+    -x ifoe.loopback.2.2 \
+    -p importer_id=0 \
+    -p exporter_id=1 \
+    -p vmid=3 \
+    -p size=1_KiB \
+    -p copy_engine=0 \
+    -c +/diag/gpu/sdma/ucodeFrontdoorLoaded=true \
+    -c +/diag/gpu/vml2/global/gcvm/silenceTimeouts=true \
+    -c +/diag/gpu/vml2/global/mmvm/silenceTimeouts=true \
+    -c +/diag/gpu/vml2/global/timeoutInterval=500ms \
+    -c +/log/root/level=Debug
+```
+
+**Notes:**
+- The `-c @/home/ckey/diags/die_full_config-cjk.json` config file location is temporary — a better home for this file is TBD
+- `--location` targets the GPU device (`75c1`), not the IFoE device
+- The diags binary is in `/simnow/diags/` inside the VM (mounted from the host)
+
 ---
