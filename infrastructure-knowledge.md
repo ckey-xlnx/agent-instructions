@@ -14,9 +14,9 @@ in `~/.ssh/config` with per-instance identity files.
 | `https://github.com` | `ckey-xlnx` | `github.com` | `github-ckey-xlnx` | not configured | Personal/Xilinx account |
 | `https://github.com` | `ckey_amdeng` | `amdeng%github.com` | `github-ckey-amdeng` | not configured | AMD org account on public GitHub |
 | `https://github.com` | `cjk32` | `cjk32%github.com` | none | none | Personal account |
-| `https://gitenterprise.xilinx.com` | `ckey` | `gitenterprise.xilinx.com` | none | none | Xilinx GitHub Enterprise |
-| `https://github.amd.com` | `ckey` | `github.amd.com` | none | none | AMD GitHub Enterprise |
-| `https://er.github.amd.com` | `ckey` | `er.github.amd.com` | none | none | AMD GHE (external-restricted) |
+| `https://gitenterprise.xilinx.com` | `ckey` | `gitenterprise.xilinx.com` | `github-ckey-xlnx-ghe` | not configured | Xilinx GHE; AMD platform `gitenterprise` endpoint |
+| `https://github.amd.com` | `ckey` | `github.amd.com` | none | none | AMD GHE; no AMD platform endpoint |
+| `https://er.github.amd.com` | `ckey` | `er.github.amd.com` | none | none | AMD GHE (external-restricted); endpoint URL unknown |
 
 ### Repository to Instance Mapping
 
@@ -158,6 +158,7 @@ and only fall back to local custom servers for services not on the platform.
 | `pensando-atlassian` | `mcp-platform.amd.com/mcp/cloud_atlassian/` | OAuth via `/mcp` — choose Pensando instance |
 | `github-ckey-xlnx` | `mcp-platform.amd.com/mcp/github_new` | PAT for `ckey-xlnx` on `github.com` |
 | `github-ckey-amdeng` | `mcp-platform.amd.com/mcp/github_new` | PAT for `ckey_amdeng` on `github.com` |
+| `github-ckey-xlnx-ghe` | `mcp-platform.amd.com/mcp/gitenterprise` | PAT for `ckey` on `gitenterprise.xilinx.com` |
 
 **To recreate on a new machine:**
 
@@ -175,6 +176,9 @@ claude mcp add --transport http "github-ckey-xlnx" \
 claude mcp add --transport http "github-ckey-amdeng" \
   "https://mcp-platform.amd.com/mcp/github_new" -s user \
   --header "Authorization: Bearer <ckey-amdeng-pat>"
+claude mcp add --transport http "github-ckey-xlnx-ghe" \
+  "https://mcp-platform.amd.com/mcp/gitenterprise" -s user \
+  --header "Authorization: Bearer <gitenterprise-xlnx-pat>"
 ```
 
 After adding each Atlassian server, open Claude Code and run `/mcp` to authenticate via
