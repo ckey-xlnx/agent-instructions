@@ -99,29 +99,27 @@ Multiple Jira instances are used across different projects. When referencing Jir
 
 | Instance | MCP Server (Claude Code) | MCP Server (Cline) |
 |----------|--------------------------|---------------------|
-| `amd.atlassian.net` | `amd-atlassian` (AMD platform, full tools) | `amd-atlassian` (AMD platform, full tools) |
-| `pensando.atlassian.net` | `pensando-atlassian` (AMD platform, full tools) | `pensando-atlassian` (AMD platform, full tools) |
-| `ontrack-internal.amd.com` | not supported | `jira` (local, `get_issue` with `instance="ontrack_internal"`) |
-| `ontrack.amd.com` | not supported | `jira` (local, `get_issue` with `instance="ontrack_external"`) |
+| `amd.atlassian.net` | `atlassian-gateway` (OAuth, auto-refresh) | not configured |
+| `pensando.atlassian.net` | none (AMD platform hardwired to AMD Jira) | none |
+| `ontrack-internal.amd.com` | `ontrack-internal` (Token PAT) | `jira` (local, `get_issue` with `instance="ontrack_internal"`) |
+| `ontrack.amd.com` | none | `jira` (local, `get_issue` with `instance="ontrack_external"`, no token yet) |
 
-**Important:** Both `amd-atlassian` and `pensando-atlassian` connect to the same AMD platform
-endpoint (`cloud_atlassian/`) but are authenticated to different Atlassian instances via OAuth.
-OnTrack tickets are only accessible via the `jira` local server in Cline.
+**Note on AMD platform Atlassian endpoints:** Both `cloud_atlassian` and `atlassian_gateway`
+are hardwired to `amd.atlassian.net` server-side. `atlassian_gateway` is preferred as it
+uses OAuth with auto-refresh. Pensando requires a separately deployed platform instance —
+no working path currently exists.
 
 ### Example Usage
 
 ```
-# Fetch a FWDEV or DMFPMSN ticket (amd.atlassian.net)
-jira_get_issue(issue_key="FWDEV-1234")                          # via amd-atlassian
+# Fetch an AMD cloud Jira ticket (Claude Code)
+jira_get_issue(issue_key="FWDEV-1234")                          # via atlassian-gateway
 
-# Fetch a Pensando ticket
-jira_get_issue(issue_key="IFOESW-205")                          # via pensando-atlassian
+# Fetch an OnTrack internal ticket (Claude Code)
+jira_get_issue(issue_key="PROJ-123")                            # via ontrack-internal
 
-# Fetch an OnTrack internal ticket (Cline only)
+# Fetch an OnTrack internal ticket (Cline)
 get_issue(instance="ontrack_internal", issue_key="PROJ-123")    # via jira
-
-# Fetch an OnTrack external ticket (Cline only)
-get_issue(instance="ontrack_external", issue_key="PROJ-123")    # via jira
 ```
 
 ## MCP Server Configuration
@@ -136,13 +134,23 @@ and only fall back to local custom servers for services not on the platform.
 
 | Endpoint | Purpose | Notes |
 |----------|---------|-------|
-| `https://mcp-platform.amd.com/mcp/cloud_atlassian/` | AMD and Pensando Jira | OAuth — instance (`amd.atlassian.net` or `pensando.atlassian.net`) chosen at auth time |
+| `https://mcp-platform.amd.com/mcp/atlassian_gateway/mcp` | AMD cloud Jira (`amd.atlassian.net`) | OAuth (Claude Code). Hardwired to AMD Jira server-side |
+| `https://mcp-platform.amd.com/mcp/internal_atlassian` | OnTrack internal (`ontrack-internal.amd.com`) | Token PAT in Authorization header |
 | `https://mcp-platform.amd.com/mcp/github_new` | Public GitHub (`github.com`) | Bearer token (PAT); add once per account |
-| `https://mcp-platform.amd.com/mcp/internal_atlassian` | OnTrack (`ontrack-internal.amd.com`) | Policy-only, not used (no working auth) |
+| `https://mcp-platform.amd.com/mcp/gitenterprise` | Xilinx GHE (`gitenterprise.xilinx.com`) | Bearer token (PAT) |
+| `https://mcp-platform.amd.com/mcp/cloud_atlassian/` | AMD cloud Jira (Basic auth alternative) | Basic auth (email:token); hardwired to AMD Jira |
 
 ### Claude Code MCP Configuration
 
 **Config file:** `~/.claude.json` (user-scope `mcpServers` key)
+
+**Gotcha:** `~/.claude.json` also stores project-scoped servers under a `projects` key.
+If a server appears under both user scope and a project scope, the project entry takes
+precedence and may lack auth credentials, showing as "connected · no tools". Check for
+duplicates with:
+```bash
+python3 -c "import json; d=json.load(open('/home/ckey/.claude.json')); print(d.get('projects',{}).get('/home/ckey',{}).get('mcpServers',{}).keys())"
+```
 
 **Policy-managed servers** (system-installed, read-only,
 `/usr/lib/engineering-ai-suite/resources/apr_setup/claude/.mcp.json`):
@@ -154,8 +162,8 @@ and only fall back to local custom servers for services not on the platform.
 
 | Server | Endpoint | Auth |
 |--------|----------|------|
-| `amd-atlassian` | `mcp-platform.amd.com/mcp/cloud_atlassian/` | OAuth via `/mcp` — choose AMD instance |
-| `pensando-atlassian` | `mcp-platform.amd.com/mcp/cloud_atlassian/` | OAuth via `/mcp` — choose Pensando instance |
+| `atlassian-gateway` | `mcp-platform.amd.com/mcp/atlassian_gateway/mcp` | OAuth via `/mcp` (AMD Jira only) |
+| `ontrack-internal` | `mcp-platform.amd.com/mcp/internal_atlassian` | Token PAT from `ontrack-internal.amd.com` |
 | `github-ckey-xlnx` | `mcp-platform.amd.com/mcp/github_new` | PAT for `ckey-xlnx` on `github.com` |
 | `github-ckey-amdeng` | `mcp-platform.amd.com/mcp/github_new` | PAT for `ckey_amdeng` on `github.com` |
 | `github-ckey-xlnx-ghe` | `mcp-platform.amd.com/mcp/gitenterprise` | PAT for `ckey` on `gitenterprise.xilinx.com` |
@@ -163,13 +171,16 @@ and only fall back to local custom servers for services not on the platform.
 **To recreate on a new machine:**
 
 ```bash
-# Add AMD and Pensando Atlassian — authenticate each via /mcp, choosing the correct instance
-claude mcp add --transport http "amd-atlassian" \
-  "https://mcp-platform.amd.com/mcp/cloud_atlassian/" -s user
-claude mcp add --transport http "pensando-atlassian" \
-  "https://mcp-platform.amd.com/mcp/cloud_atlassian/" -s user
+# AMD cloud Jira via OAuth gateway — then authenticate via /mcp
+claude mcp add --transport http "atlassian-gateway" \
+  "https://mcp-platform.amd.com/mcp/atlassian_gateway/mcp" -s user
 
-# Add GitHub accounts (PATs stored separately — do not commit)
+# OnTrack internal — Token PAT (generate at ontrack-internal.amd.com/secure/ViewProfile.jspa)
+claude mcp add --transport http "ontrack-internal" \
+  "https://mcp-platform.amd.com/mcp/internal_atlassian" -s user \
+  --header "Authorization: Token <ontrack-internal-pat>"
+
+# GitHub accounts (PATs stored separately — do not commit)
 claude mcp add --transport http "github-ckey-xlnx" \
   "https://mcp-platform.amd.com/mcp/github_new" -s user \
   --header "Authorization: Bearer <ckey-xlnx-pat>"
@@ -181,10 +192,7 @@ claude mcp add --transport http "github-ckey-xlnx-ghe" \
   --header "Authorization: Bearer <gitenterprise-xlnx-pat>"
 ```
 
-After adding each Atlassian server, open Claude Code and run `/mcp` to authenticate via
-OAuth. The OAuth page asks "use app on" with options `amd.atlassian.net` and
-`pensando.atlassian.net` — choose `amd.atlassian.net` for `amd-atlassian` and
-`pensando.atlassian.net` for `pensando-atlassian`.
+After adding `atlassian-gateway`, open Claude Code and run `/mcp` to authenticate via OAuth.
 
 ### VS Code Cline MCP Configuration
 
@@ -195,13 +203,11 @@ OAuth. The OAuth page asks "use app on" with options `amd.atlassian.net` and
 
 | Server | Type | Source/URL |
 |--------|------|-----------|
-| `amd-atlassian` | streamableHttp | `mcp-platform.amd.com/mcp/cloud_atlassian/` (AMD instance) |
-| `pensando-atlassian` | streamableHttp | `mcp-platform.amd.com/mcp/cloud_atlassian/` (Pensando instance) |
-| `jira` | stdio (local) | `/home/ckey/hg/cline-mcp/jira-server` (OnTrack only) |
+| `jira` | stdio (local) | `/home/ckey/hg/cline-mcp/jira-server` (OnTrack instances only; no AMD cloud) |
 | `reviewboard` | stdio (local) | `/home/ckey/hg/cline-mcp/reviewboard-server` |
 | `mcp-cli-exec` | stdio (local) | `/home/ckey/hg/cline-mcp/mcp-cli-exec` |
 
-Cline handles OAuth for the `streamableHttp` servers itself.
+AMD cloud Jira and Pensando are not configured for Cline.
 
 ### Building Local MCP Servers
 
