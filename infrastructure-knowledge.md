@@ -2,6 +2,56 @@
 
 This document contains general infrastructure information that applies across projects, including service mappings, tool configurations, and other operational knowledge.
 
+## GitHub Instance and Repository Mapping
+
+Multiple GitHub instances are used across different projects. SSH access is configured
+in `~/.ssh/config` with per-instance identity files.
+
+### GitHub Instances
+
+| Instance URL | Username | SSH Host | Notes |
+|-------------|----------|----------|-------|
+| `https://github.com` | `ckey-xlnx` | `github.com` | Personal/Xilinx account |
+| `https://github.com` | `ckey_amdeng` | `amdeng%github.com` | AMD org account on public GitHub |
+| `https://github.com` | `cjk32` | `cjk32%github.com` | Personal account |
+| `https://gitenterprise.xilinx.com` | `ckey` | `gitenterprise.xilinx.com` | Xilinx GitHub Enterprise |
+| `https://github.amd.com` | `ckey` | `github.amd.com` | AMD GitHub Enterprise |
+| `https://er.github.amd.com` | `ckey` | `er.github.amd.com` | AMD GHE (external-restricted) |
+
+### Repository to Instance Mapping
+
+**`https://github.com` — `ckey-xlnx`:**
+- `dotfiles`, `agent-instructions`, `vscode-workspaces`, `cline-mcp`
+- `util`, `btl_extract`, `model` (simlater), `ifoe_ss_model` (personal fork/copy)
+
+**`https://github.com` — `ckey_amdeng` (AMD orgs):**
+- `AMD-SW-Simnow/simnow`
+- `AMD-GOQDIAGS/diag_tng`
+- `AMD-SLAI/SLAI.Cline`
+
+**`https://github.com` — `pensando` org (read access):**
+- `mpifoe-fw` (mirror; origin is `github.amd.com`), `ifoe-ts`, `ifoe-emu-chip`
+- `ifoe-arch-model`, `ifoe-drv`, `rtos-sw`, `rtos-shared`, `ualoe_config_tests`
+- `diag_tng` (upstream of AMD fork)
+
+**`https://github.com` — `Xilinx-CNS` org:**
+- `smartnic-runbench`, `xcb-serverpower-config`, `ol-git-helpers`
+
+**`https://gitenterprise.xilinx.com` — `SmartNIC` org:**
+- `smartnic_fw`, `smartnic_tools`, `smartnic_registry`, `smartnic_hwdefs`
+- `smartnic_internal_tools`, `x2_fw`, `dcs-arch`, `ksb_apu_fw`
+- `cdxconf` (under `ckey/`)
+
+**`https://github.amd.com` — `PFO` org:**
+- `mpifoe-fw` (origin), `mpio`, `asp-fmc`
+
+**`https://er.github.amd.com` — `PFO` / `NTSG` orgs:**
+- `amd-tee3.0`, `sw-security-tools`, `dcgpu-esid` (PFO)
+- `ifoe_ss_model` (NTSG — origin)
+
+**`https://github.com` — `cjk32` (personal):**
+- `cobra`
+
 ## Jira Instance Mapping
 
 Multiple Jira instances are used across different projects. When referencing Jira tickets or using Jira tools, use the following mapping:
