@@ -26,15 +26,18 @@ Both installed under `/proj/smartnic/xcb/ifoe/simnow/`.
 
 #### Launch command
 
-From a scratch directory (e.g. `/scratch/ckey/simnow`):
+From a scratch directory (e.g. `/scratch/ckey/simnow`), run SimNow inside a `screen` session so it survives SSH disconnection and its interactive console remains accessible:
 
 ```bash
 cd /scratch/ckey/simnow
-/home/ckey/hg/mpifoe-fw/scripts/simnow-launch/sim222.IFoE_link_0_to_1.sh \
+/tool/pandora64/bin/screen -dmS simnow bash -c \
+  '/home/ckey/hg/mpifoe-fw/scripts/simnow-launch/sim222.IFoE_link_0_to_1.sh \
   --slt \
   -r /proj/smartnic/xcb/ifoe/simnow/simnow-linux64-rhel8-gcc10-mi450_ifoe-20260514-0P1G-M222-release-combined-v7-a85ee03f90 \
-  -fw /home/ckey/hg/mpifoe-fw/build/fw.mi450-a0.simnow_eftest/zephyr/mpifoe_fw.hbin
+  -fw /home/ckey/hg/mpifoe-fw/build/fw.mi450-a0.simnow_eftest/zephyr/mpifoe_fw.hbin'
 ```
+
+**Use `screen`, not `tmux`**: killing a tmux server kills all sessions within it. Use `screen` — sessions survive independently. Also do not pipe SimNow through `tee` — it breaks the interactive console (responses are not echoed back).
 
 **Key flags:**
 - `--slt` — selects the SLT topology (`mi450_222_slt_ifoe.listen.now`) and uses the IFWI bundled inside the release; no separate `-if` needed
@@ -45,13 +48,20 @@ cd /scratch/ckey/simnow
 
 SimNow takes approximately 20 minutes to boot. It has reached steady state when the mpifoe postcode monitor shows `0x800f0000`.
 
+To check programmatically via screen:
+
+```bash
+/tool/pandora64/bin/screen -S simnow -X hardcopy /tmp/simnow-screen.txt
+grep -c '800f0000' /tmp/simnow-screen.txt
+```
+
 #### Launching QEMU
 
-Once SimNow has reached steady state, launch QEMU from the same directory SimNow was run from:
+Once SimNow has reached steady state, launch QEMU in its own `screen` session:
 
 ```bash
 cd /scratch/ckey/simnow
-./launch-qemu.sh
+/tool/pandora64/bin/screen -dmS qemu bash -c './launch-qemu.sh'
 ```
 
 QEMU uses a randomly chosen SSH port forwarded to port 22 inside the VM. Find the port from the running process:
@@ -86,7 +96,14 @@ AMD device ID `1747` is the IFoE device. Its presence confirms successful enumer
 
 After SimNow reaches steady state (`0x800f0000`) but **before** launching QEMU, a set of `mid_cf` register writes must be applied. These unlock MMIO access needed by the diags test.
 
-These are applied interactively via the SimNow console (SimNow continues running — no Ctrl-C needed):
+These are applied interactively via the SimNow console (SimNow continues running — no Ctrl-C needed). To send commands non-interactively via screen:
+
+```bash
+/tool/pandora64/bin/screen -S simnow -X stuff 'mid_cf:0.write 0x00001200 0x8000000F
+'
+```
+
+Note the literal newline inside the single quotes — `screen -X stuff` requires it to submit the command.
 
 ```
 mid_cf:0.write 0x00001200 0x8000000F
