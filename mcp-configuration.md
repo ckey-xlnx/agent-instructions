@@ -126,6 +126,12 @@ No exceptions — Claude Code matches the common configuration exactly.
 Config file: `~/.dotfiles/.cline/data/settings/cline_mcp_settings.json`
 (symlinked to `~/.cline/data/settings/cline_mcp_settings.json`)
 
+The config file is tracked in `~/.dotfiles` (version controlled) but contains
+placeholder tokens (`YOUR_..._TOKEN_HERE`) in place of real credentials. After
+cloning dotfiles on a new machine, replace each placeholder with the real PAT
+before starting Cline. Do not commit real tokens — the placeholders serve as
+the documented template.
+
 All servers below are local stdio servers from `/home/ckey/hg/cline-mcp`. They replace
 the corresponding common-config servers until migrated.
 
