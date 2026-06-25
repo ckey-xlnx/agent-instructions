@@ -41,53 +41,113 @@ Multiple Jira instances are used across different projects. When referencing Jir
 
 ### Usage Notes
 
-- When using the Jira MCP server tools, specify the instance explicitly based on the project prefix
+- Check the ticket prefix to determine which Jira instance and MCP server to use
 - For automated reviews, check the ticket prefix to determine the correct instance
 - If you encounter a project prefix not listed here, ask for clarification on which instance to use
+
+### MCP Server to Use by Instance
+
+| Instance | MCP Server (Claude Code) | MCP Server (Cline) |
+|----------|--------------------------|---------------------|
+| `amd.atlassian.net` | `amd-atlassian` (AMD platform, full tools) | `amd-atlassian` (AMD platform, full tools) |
+| `pensando.atlassian.net` | `pensando-atlassian` (AMD platform, full tools) | `pensando-atlassian` (AMD platform, full tools) |
+| `ontrack-internal.amd.com` | not supported | `jira` (local, `get_issue` with `instance="ontrack_internal"`) |
+| `ontrack.amd.com` | not supported | `jira` (local, `get_issue` with `instance="ontrack_external"`) |
+
+**Important:** Both `amd-atlassian` and `pensando-atlassian` connect to the same AMD platform
+endpoint (`cloud_atlassian/`) but are authenticated to different Atlassian instances via OAuth.
+OnTrack tickets are only accessible via the `jira` local server in Cline.
 
 ### Example Usage
 
 ```
-# Fetch an IFOESW ticket from Pensando
-get_issue(instance="pensando", issue_key="IFOESW-205")
+# Fetch a FWDEV or DMFPMSN ticket (amd.atlassian.net)
+jira_get_issue(issue_key="FWDEV-1234")                          # via amd-atlassian
 
-# Search for FWDEV tickets (migrated to cloud AMD instance)
-search_issues(instance="amd", jql="project = FWDEV AND status = Open")
+# Fetch a Pensando ticket
+jira_get_issue(issue_key="IFOESW-205")                          # via pensando-atlassian
 
-# Fetch a DMFPMSN ticket from AMD
-get_issue(instance="amd", issue_key="DMFPMSN-12345")
+# Fetch an OnTrack internal ticket (Cline only)
+get_issue(instance="ontrack_internal", issue_key="PROJ-123")    # via jira
+
+# Fetch an OnTrack external ticket (Cline only)
+get_issue(instance="ontrack_external", issue_key="PROJ-123")    # via jira
 ```
 
 ## MCP Server Configuration
 
-### Configuration File Location
+### Overview
 
-The Cline MCP server configuration is located at:
+MCP servers are configured for two clients: **Claude Code** (CLI) and **VS Code Cline**. The
+goal is to use official AMD MCP platform servers (`mcp-platform.amd.com`) wherever possible,
+and only fall back to local custom servers for services not on the platform.
+
+### AMD MCP Platform Endpoints
+
+| Endpoint | Purpose | Notes |
+|----------|---------|-------|
+| `https://mcp-platform.amd.com/mcp/cloud_atlassian/` | AMD and Pensando Jira | OAuth — instance (`amd.atlassian.net` or `pensando.atlassian.net`) chosen at auth time |
+| `https://mcp-platform.amd.com/mcp/github_new` | GitHub | Bearer token header |
+| `https://mcp-platform.amd.com/mcp/internal_atlassian` | OnTrack (`ontrack-internal.amd.com`) | Policy-only, not used (no working auth) |
+
+### Claude Code MCP Configuration
+
+**Config file:** `~/.claude.json` (user-scope `mcpServers` key)
+
+**Policy-managed servers** (system-installed, read-only,
+`/usr/lib/engineering-ai-suite/resources/apr_setup/claude/.mcp.json`):
+- `github-mcp` — GitHub, tool-filtered
+- `jira-internal` — OnTrack Jira (policy-managed, do not use — no working auth)
+- `codegen`, `sourcegraph`, `similar-tickets`
+
+**User-added servers** (stored in `~/.claude.json`, require manual setup on a new machine):
+
+| Server | Endpoint | Auth |
+|--------|----------|------|
+| `amd-atlassian` | `mcp-platform.amd.com/mcp/cloud_atlassian/` | OAuth via `/mcp` — choose AMD instance |
+| `pensando-atlassian` | `mcp-platform.amd.com/mcp/cloud_atlassian/` | OAuth via `/mcp` — choose Pensando instance |
+| `github-new` | `mcp-platform.amd.com/mcp/github_new` | Static Bearer token (GitHub PAT) |
+
+**To recreate on a new machine:**
+
+```bash
+# Add AMD and Pensando Atlassian — authenticate each via /mcp, choosing the correct instance
+claude mcp add --transport http "amd-atlassian" \
+  "https://mcp-platform.amd.com/mcp/cloud_atlassian/" -s user
+claude mcp add --transport http "pensando-atlassian" \
+  "https://mcp-platform.amd.com/mcp/cloud_atlassian/" -s user
+
+# Add GitHub with a personal access token
+claude mcp add --transport http "github-new" \
+  "https://mcp-platform.amd.com/mcp/github_new" -s user \
+  --header "Authorization: Bearer <github_pat>"
 ```
-~/.vscode-server/data/User/globalStorage/slai.claude-dev/settings/cline_mcp_settings.json
-```
 
-### Available MCP Servers
+After adding each Atlassian server, open Claude Code and run `/mcp` to authenticate via
+OAuth. The OAuth page asks "use app on" with options `amd.atlassian.net` and
+`pensando.atlassian.net` — choose `amd.atlassian.net` for `amd-atlassian` and
+`pensando.atlassian.net` for `pensando-atlassian`.
 
-**reviewboard** - ReviewBoard integration
-- Source: `/home/ckey/hg/cline-mcp/reviewboard-server`
-- Provides tools for interacting with ReviewBoard code review system
-- Auto-approved tools: list_review_requests, get_review_request, get_review_diffs, get_diff_content, get_reviews, get_review_comments, get_review_replies, get_diff_files
+### VS Code Cline MCP Configuration
 
-**jira** - Jira integration
-- Source: `/home/ckey/hg/cline-mcp/jira-server`
-- Provides tools for interacting with multiple Jira instances
-- Auto-approved tools: get_issue
+**Config file:** `~/.dotfiles/.cline/data/settings/cline_mcp_settings.json`
+(symlinked to `~/.cline/data/settings/cline_mcp_settings.json`)
 
-**mcp-cli-exec** - Terminal/CLI command execution
-- Source: `/home/ckey/hg/cline-mcp/mcp-cli-exec`
-- Provides tools for executing shell commands with structured output
-- Tools: cli-exec-raw, cli-exec
-- Timeout: 300 seconds (5 minutes)
+**Servers:**
 
-### Building MCP Servers
+| Server | Type | Source/URL |
+|--------|------|-----------|
+| `amd-atlassian` | streamableHttp | `mcp-platform.amd.com/mcp/cloud_atlassian/` (AMD instance) |
+| `pensando-atlassian` | streamableHttp | `mcp-platform.amd.com/mcp/cloud_atlassian/` (Pensando instance) |
+| `jira` | stdio (local) | `/home/ckey/hg/cline-mcp/jira-server` (OnTrack only) |
+| `reviewboard` | stdio (local) | `/home/ckey/hg/cline-mcp/reviewboard-server` |
+| `mcp-cli-exec` | stdio (local) | `/home/ckey/hg/cline-mcp/mcp-cli-exec` |
 
-MCP servers in the cline-mcp submodule are TypeScript-based and require compilation:
+Cline handles OAuth for the `streamableHttp` servers itself.
+
+### Building Local MCP Servers
+
+Local servers (reviewboard, mcp-cli-exec) in the `cline-mcp` repo are TypeScript-based:
 
 ```bash
 cd /home/ckey/hg/cline-mcp/<server-name>
@@ -95,7 +155,7 @@ npm install
 npm run build
 ```
 
-The build output goes to the `build/` directory and is referenced in the MCP configuration.
+The build output goes to the `build/` directory and is referenced in the Cline config.
 
 ## VS Code Server Storage Cleanup
 
