@@ -49,11 +49,18 @@ Pensando cloud Jira requires a separately deployed platform instance — no work
 
 | Instance | Server |
 |----------|--------|
-| `reviewboard.amd.com` | — (no AMD platform endpoint yet) |
+| `reviewboard.amd.com` | `reviewboard` (local stdio, `cline-mcp/reviewboard-server`) |
 
 ### Setup Commands (new machine)
 
 ```bash
+# ReviewBoard — API token (generate at reviewboard.amd.com/account/api-tokens/)
+claude mcp add -s user --transport stdio "reviewboard" \
+  /tool/pandora/.package/node-24.5.0/bin/node \
+  /home/ckey/hg/cline-mcp/reviewboard-server/build/index.js \
+  -e REVIEWBOARD_URL=https://reviewboard.amd.com \
+  -e REVIEWBOARD_TOKEN=<reviewboard-pat>
+
 # AMD cloud Jira via OAuth gateway — then run /mcp in Claude Code to authenticate
 claude mcp add --transport http "atlassian-gateway" \
   "https://mcp-platform.amd.com/mcp/atlassian_gateway/mcp" -s user
@@ -108,9 +115,8 @@ the corresponding common-config servers until migrated.
 |---------|--------------|-----------------|-------|
 | `ontrack-internal.amd.com` | `ontrack-internal` | `jira` (local stdio) | `get_issue(instance="ontrack_internal", ...)` |
 | `ontrack.amd.com` | — | `jira` (local stdio) | `get_issue(instance="ontrack_external", ...)` — no token configured yet |
-| `reviewboard.amd.com` | — | `reviewboard` (local stdio) | No platform endpoint; not yet migratable |
 
-AMD cloud Jira (`amd.atlassian.net`) and Pensando are not configured for Cline.
+AMD cloud Jira (`amd.atlassian.net`), Pensando, and ReviewBoard are not configured for Cline.
 
 #### Building Local Servers
 
