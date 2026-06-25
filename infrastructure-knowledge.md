@@ -1,41 +1,46 @@
 # Infrastructure Knowledge
 
-This document contains general infrastructure information that applies across projects, including service mappings, tool configurations, and other operational knowledge.
+This document contains agent-agnostic infrastructure facts: which instances exist, what
+they are for, and which projects/repos live on each. It does **not** describe how to access
+these services via MCP — see `mcp-configuration.md` for that.
 
-## GitHub Instance and Repository Mapping
+## GitHub
 
 Multiple GitHub instances are used across different projects. SSH access is configured
 in `~/.ssh/config` with per-instance identity files.
 
-### GitHub Instances
+### Accounts
 
-| Instance URL | Username | SSH Host | MCP (Claude Code) | MCP (Cline) | Notes |
-|-------------|----------|----------|-------------------|-------------|-------|
-| `https://github.com` | `ckey-xlnx` | `github.com` | `github-ckey-xlnx` | not configured | Personal/Xilinx account |
-| `https://github.com` | `ckey_amdeng` | `amdeng%github.com` | `github-ckey-amdeng` | not configured | AMD org account on public GitHub |
-| `https://github.com` | `cjk32` | `cjk32%github.com` | none | none | Personal account |
-| `https://gitenterprise.xilinx.com` | `ckey` | `gitenterprise.xilinx.com` | `github-ckey-xlnx-ghe` | not configured | Xilinx GHE; AMD platform `gitenterprise` endpoint |
-| `https://github.amd.com` | `ckey` | `github.amd.com` | none | none | AMD GHE; no AMD platform endpoint |
-| `https://er.github.amd.com` | `ckey` | `er.github.amd.com` | none | none | AMD GHE (external-restricted); endpoint URL unknown |
+| Instance URL | Username | SSH Host | Org(s) | Notes |
+|-------------|----------|----------|--------|-------|
+| `https://github.com` | `ckey-xlnx` | `github.com` | personal, `Xilinx-CNS`, `pensando` (read) | Personal/Xilinx account |
+| `https://github.com` | `ckey_amdeng` | `amdeng%github.com` | `AMD-SW-Simnow`, `AMD-GOQDIAGS`, `AMD-SLAI` | AMD org account on public GitHub |
+| `https://github.com` | `cjk32` | `cjk32%github.com` | personal | Personal account, rarely used |
+| `https://gitenterprise.xilinx.com` | `ckey` | `gitenterprise.xilinx.com` | `SmartNIC` | Xilinx GHE |
+| `https://github.amd.com` | `ckey` | `github.amd.com` | `PFO` | AMD GHE; no AMD platform MCP endpoint |
+| `https://er.github.amd.com` | `ckey` | `er.github.amd.com` | `PFO`, `NTSG` | AMD GHE (external-restricted) |
 
-### Repository to Instance Mapping
+### Repository to Account Mapping
 
-**`https://github.com` — `ckey-xlnx`:**
+**`https://github.com` — `ckey-xlnx` (personal):**
 - `dotfiles`, `agent-instructions`, `vscode-workspaces`, `cline-mcp`
 - `util`, `btl_extract`, `model` (simlater), `ifoe_ss_model` (personal fork/copy)
 
-**`https://github.com` — `ckey_amdeng` (AMD orgs):**
-- `AMD-SW-Simnow/simnow`
-- `AMD-GOQDIAGS/diag_tng`
-- `AMD-SLAI/SLAI.Cline`
+**`https://github.com` — `ckey-xlnx` via `Xilinx-CNS` org:**
+- `smartnic-runbench`, `xcb-serverpower-config`, `ol-git-helpers`
 
-**`https://github.com` — `pensando` org (read access):**
+**`https://github.com` — `ckey-xlnx` via `pensando` org (read access):**
 - `mpifoe-fw` (mirror; origin is `github.amd.com`), `ifoe-ts`, `ifoe-emu-chip`
 - `ifoe-arch-model`, `ifoe-drv`, `rtos-sw`, `rtos-shared`, `ualoe_config_tests`
 - `diag_tng` (upstream of AMD fork)
 
-**`https://github.com` — `Xilinx-CNS` org:**
-- `smartnic-runbench`, `xcb-serverpower-config`, `ol-git-helpers`
+**`https://github.com` — `ckey_amdeng` via AMD orgs:**
+- `AMD-SW-Simnow/simnow`
+- `AMD-GOQDIAGS/diag_tng`
+- `AMD-SLAI/SLAI.Cline`
+
+**`https://github.com` — `cjk32` (personal):**
+- `cobra`
 
 **`https://gitenterprise.xilinx.com` — `SmartNIC` org:**
 - `smartnic_fw`, `smartnic_tools`, `smartnic_registry`, `smartnic_hwdefs`
@@ -49,177 +54,34 @@ in `~/.ssh/config` with per-instance identity files.
 - `amd-tee3.0`, `sw-security-tools`, `dcgpu-esid` (PFO)
 - `ifoe_ss_model` (NTSG — origin)
 
-**`https://github.com` — `cjk32` (personal):**
-- `cobra`
+## Jira
 
-## Jira Instance Mapping
+Multiple Jira instances are used across different projects. Check the ticket prefix to
+determine which instance a ticket belongs to. If a prefix is not listed here, ask for
+clarification.
 
-Multiple Jira instances are used across different projects. When referencing Jira tickets or using Jira tools, use the following mapping:
+| Instance | URL | Purpose | Known Projects |
+|----------|-----|---------|---------------|
+| AMD cloud (`amd`) | `https://amd.atlassian.net` | Primary AMD internal Jira (cloud) | `FWDEV-*`, `DMFPMSN-*`, and others migrated from OnTrack |
+| OnTrack Internal (`ontrack_internal`) | `https://ontrack-internal.amd.com` | AMD internal (legacy/unmigrated projects) | Various — check `amd` first for projects that were historically here |
+| OnTrack External (`ontrack_external`) | `https://ontrack.amd.com` | Customer/supplier collaboration | Various |
+| Pensando cloud (`pensando`) | `https://pensando.atlassian.net` | IFOE/Pensando-lineage work | `IFOESW-*` |
 
-### Project to Instance Mapping
+**Projects requiring investigation:**
+- `SIEEMU-*` — instance location not yet determined
 
-**Pensando Atlassian Instance** (`pensando`)
-- URL: https://pensando.atlassian.net
-- Projects:
-  - **IFOESW-*** - IFOE Software (legacy and Oktek interaction)
+## ReviewBoard
 
-**OnTrack Internal Instance** (`ontrack_internal`)
-- URL: https://ontrack-internal.amd.com
-- Purpose: Normal AMD internal tickets
-- Projects:
-  - (Internal AMD projects not yet migrated to cloud)
-- Note: Many projects have been migrated to the cloud AMD Atlassian instance
-  (`amd`), including **FWDEV-***. Check the `amd` instance first for projects
-  that were historically here.
+| Instance | URL | Purpose |
+|----------|-----|---------|
+| AMD ReviewBoard | `https://reviewboard.amd.com` | Code review (primary) |
 
-**OnTrack External Instance** (`ontrack_external`)
-- URL: https://ontrack.amd.com
-- Purpose: Tickets shared with AMD customers/suppliers
-- Projects:
-  - (Customer/supplier collaboration projects)
+## Other Services
 
-**AMD Atlassian Instance** (`amd`)
-- URL: https://amd.atlassian.net
-- Projects:
-  - **DMFPMSN-*** - AMD-specific project
-  - **FWDEV-*** - Firmware Development (migrated from `ontrack_internal`)
-  - (Other projects migrated to cloud from `ontrack_internal`)
-
-### Projects Requiring Investigation
-
-- **SIEEMU-*** - Instance location to be determined
-
-### Usage Notes
-
-- Check the ticket prefix to determine which Jira instance and MCP server to use
-- For automated reviews, check the ticket prefix to determine the correct instance
-- If you encounter a project prefix not listed here, ask for clarification on which instance to use
-
-### MCP Server to Use by Instance
-
-| Instance | MCP Server (Claude Code) | MCP Server (Cline) |
-|----------|--------------------------|---------------------|
-| `amd.atlassian.net` | `atlassian-gateway` (OAuth, auto-refresh) | not configured |
-| `pensando.atlassian.net` | none (AMD platform hardwired to AMD Jira) | none |
-| `ontrack-internal.amd.com` | `ontrack-internal` (Token PAT) | `jira` (local, `get_issue` with `instance="ontrack_internal"`) |
-| `ontrack.amd.com` | none | `jira` (local, `get_issue` with `instance="ontrack_external"`, no token yet) |
-
-**Note on AMD platform Atlassian endpoints:** Both `cloud_atlassian` and `atlassian_gateway`
-are hardwired to `amd.atlassian.net` server-side. `atlassian_gateway` is preferred as it
-uses OAuth with auto-refresh. Pensando requires a separately deployed platform instance —
-no working path currently exists.
-
-### Example Usage
-
-```
-# Fetch an AMD cloud Jira ticket (Claude Code)
-jira_get_issue(issue_key="FWDEV-1234")                          # via atlassian-gateway
-
-# Fetch an OnTrack internal ticket (Claude Code)
-jira_get_issue(issue_key="PROJ-123")                            # via ontrack-internal
-
-# Fetch an OnTrack internal ticket (Cline)
-get_issue(instance="ontrack_internal", issue_key="PROJ-123")    # via jira
-```
-
-## MCP Server Configuration
-
-### Overview
-
-MCP servers are configured for two clients: **Claude Code** (CLI) and **VS Code Cline**. The
-goal is to use official AMD MCP platform servers (`mcp-platform.amd.com`) wherever possible,
-and only fall back to local custom servers for services not on the platform.
-
-### AMD MCP Platform Endpoints
-
-| Endpoint | Purpose | Notes |
-|----------|---------|-------|
-| `https://mcp-platform.amd.com/mcp/atlassian_gateway/mcp` | AMD cloud Jira (`amd.atlassian.net`) | OAuth (Claude Code). Hardwired to AMD Jira server-side |
-| `https://mcp-platform.amd.com/mcp/internal_atlassian` | OnTrack internal (`ontrack-internal.amd.com`) | Token PAT in Authorization header |
-| `https://mcp-platform.amd.com/mcp/github_new` | Public GitHub (`github.com`) | Bearer token (PAT); add once per account |
-| `https://mcp-platform.amd.com/mcp/gitenterprise` | Xilinx GHE (`gitenterprise.xilinx.com`) | Bearer token (PAT) |
-| `https://mcp-platform.amd.com/mcp/cloud_atlassian/` | AMD cloud Jira (Basic auth alternative) | Basic auth (email:token); hardwired to AMD Jira |
-
-### Claude Code MCP Configuration
-
-**Config file:** `~/.claude.json` (user-scope `mcpServers` key)
-
-**Gotcha:** `~/.claude.json` also stores project-scoped servers under a `projects` key.
-If a server appears under both user scope and a project scope, the project entry takes
-precedence and may lack auth credentials, showing as "connected · no tools". Check for
-duplicates with:
-```bash
-python3 -c "import json; d=json.load(open('/home/ckey/.claude.json')); print(d.get('projects',{}).get('/home/ckey',{}).get('mcpServers',{}).keys())"
-```
-
-**Policy-managed servers** (system-installed, read-only,
-`/usr/lib/engineering-ai-suite/resources/apr_setup/claude/.mcp.json`):
-- `github-mcp` — GitHub, tool-filtered
-- `jira-internal` — OnTrack Jira (policy-managed, do not use — no working auth)
-- `codegen`, `sourcegraph`, `similar-tickets`
-
-**User-added servers** (stored in `~/.claude.json`, require manual setup on a new machine):
-
-| Server | Endpoint | Auth |
-|--------|----------|------|
-| `atlassian-gateway` | `mcp-platform.amd.com/mcp/atlassian_gateway/mcp` | OAuth via `/mcp` (AMD Jira only) |
-| `ontrack-internal` | `mcp-platform.amd.com/mcp/internal_atlassian` | Token PAT from `ontrack-internal.amd.com` |
-| `github-ckey-xlnx` | `mcp-platform.amd.com/mcp/github_new` | PAT for `ckey-xlnx` on `github.com` |
-| `github-ckey-amdeng` | `mcp-platform.amd.com/mcp/github_new` | PAT for `ckey_amdeng` on `github.com` |
-| `github-ckey-xlnx-ghe` | `mcp-platform.amd.com/mcp/gitenterprise` | PAT for `ckey` on `gitenterprise.xilinx.com` |
-
-**To recreate on a new machine:**
-
-```bash
-# AMD cloud Jira via OAuth gateway — then authenticate via /mcp
-claude mcp add --transport http "atlassian-gateway" \
-  "https://mcp-platform.amd.com/mcp/atlassian_gateway/mcp" -s user
-
-# OnTrack internal — Token PAT (generate at ontrack-internal.amd.com/secure/ViewProfile.jspa)
-claude mcp add --transport http "ontrack-internal" \
-  "https://mcp-platform.amd.com/mcp/internal_atlassian" -s user \
-  --header "Authorization: Token <ontrack-internal-pat>"
-
-# GitHub accounts (PATs stored separately — do not commit)
-claude mcp add --transport http "github-ckey-xlnx" \
-  "https://mcp-platform.amd.com/mcp/github_new" -s user \
-  --header "Authorization: Bearer <ckey-xlnx-pat>"
-claude mcp add --transport http "github-ckey-amdeng" \
-  "https://mcp-platform.amd.com/mcp/github_new" -s user \
-  --header "Authorization: Bearer <ckey-amdeng-pat>"
-claude mcp add --transport http "github-ckey-xlnx-ghe" \
-  "https://mcp-platform.amd.com/mcp/gitenterprise" -s user \
-  --header "Authorization: Bearer <gitenterprise-xlnx-pat>"
-```
-
-After adding `atlassian-gateway`, open Claude Code and run `/mcp` to authenticate via OAuth.
-
-### VS Code Cline MCP Configuration
-
-**Config file:** `~/.dotfiles/.cline/data/settings/cline_mcp_settings.json`
-(symlinked to `~/.cline/data/settings/cline_mcp_settings.json`)
-
-**Servers:**
-
-| Server | Type | Source/URL |
-|--------|------|-----------|
-| `jira` | stdio (local) | `/home/ckey/hg/cline-mcp/jira-server` (OnTrack instances only; no AMD cloud) |
-| `reviewboard` | stdio (local) | `/home/ckey/hg/cline-mcp/reviewboard-server` |
-| `mcp-cli-exec` | stdio (local) | `/home/ckey/hg/cline-mcp/mcp-cli-exec` |
-
-AMD cloud Jira and Pensando are not configured for Cline.
-
-### Building Local MCP Servers
-
-Local servers (reviewboard, mcp-cli-exec) in the `cline-mcp` repo are TypeScript-based:
-
-```bash
-cd /home/ckey/hg/cline-mcp/<server-name>
-npm install
-npm run build
-```
-
-The build output goes to the `build/` directory and is referenced in the Cline config.
+| Service | URL | Purpose |
+|---------|-----|---------|
+| Sourcegraph | `https://sourcegraph.amd.com` | AMD internal code search |
+| AMD MCP Platform | `https://mcp-platform.amd.com` | Gateway for AMD-hosted MCP services (see `mcp-configuration.md`) |
 
 ## VS Code Server Storage Cleanup
 
@@ -340,7 +202,6 @@ Copilot Chat history caches and can be cleared if the history is not needed.
 (Additional infrastructure knowledge will be added here as needed, such as:
 - Build system configurations
 - CI/CD pipeline details
-- Repository locations and purposes
 - Development environment setup
 - Testing infrastructure
 - Deployment procedures)

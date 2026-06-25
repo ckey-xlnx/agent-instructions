@@ -101,10 +101,14 @@ When starting a task, if it's unclear which folder the work should be done in, c
 - Separate from coding style - focuses on tool execution
 
 **infrastructure-knowledge.md**
-- General infrastructure information and service mappings
-- Jira instance to project mapping
-- Build systems, CI/CD, and deployment information
-- Operational knowledge that applies across projects
+- Agent-agnostic infrastructure facts: instances, URLs, which projects/repos live where
+- GitHub accounts and repo mapping, Jira instances, ReviewBoard, other services
+- Does NOT describe MCP access — see `mcp-configuration.md` for that
+
+**mcp-configuration.md**
+- How to access infrastructure services via MCP, per agent (Claude Code and Cline)
+- AMD MCP platform endpoints, per-service server mapping, setup commands
+- Agent-specific: server names, auth, tool call examples
 
 **reporting-instructions.md**
 - AI attribution requirements for external systems (Jira, etc.)
@@ -129,6 +133,7 @@ When starting a task, if it's unclear which folder the work should be done in, c
 - For debugging tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
 - For tool usage mechanics (debuggers, build systems, etc.), reference **agent-tooling-instructions.md**
 - For infrastructure information (Jira instances, service mappings, etc.), reference **infrastructure-knowledge.md**
+- For MCP server names, auth, and tool call syntax per agent, reference **mcp-configuration.md**
 - When creating Jira issues or other external reports, reference **reporting-instructions.md**
 - For operational/admin tasks (release installation, artifact management), reference **operational-knowledge.md**
 - For end-to-end multi-component workflows, reference **workflow-knowledge.md**
