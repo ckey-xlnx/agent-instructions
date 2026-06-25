@@ -67,10 +67,9 @@ claude mcp add -s user --transport stdio "jira" \
   -e JIRA_INSTANCE_PENSANDO_EMAIL=<amd-email> \
   -e JIRA_INSTANCE_PENSANDO_TOKEN=<pensando-pat>
 
-# Cline: add env vars to the existing "jira" server entry in cline_mcp_settings.json:
-#   "JIRA_INSTANCE_PENSANDO_URL": "https://pensando.atlassian.net",
-#   "JIRA_INSTANCE_PENSANDO_EMAIL": "<amd-email>",
-#   "JIRA_INSTANCE_PENSANDO_TOKEN": "<pensando-pat>"
+# Cline: populate all instances in the "jira" server entry in cline_mcp_settings.json
+# (AMD cloud, OnTrack, Pensando). See template:
+# ~/.dotfiles/.cline/data/settings/cline_mcp_settings.json.template
 
 # ReviewBoard — API token (generate at reviewboard.amd.com/account/api-tokens/)
 claude mcp add -s user --transport stdio "reviewboard" \
@@ -108,6 +107,9 @@ jira_get_issue(issue_key="FWDEV-1234")    # via atlassian-gateway
 
 # OnTrack internal
 jira_get_issue(issue_key="PROJ-123")      # via ontrack-internal
+
+# Pensando cloud Jira
+get_issue(instance="pensando", issue_key="IFOESW-1234")    # via jira (local stdio)
 ```
 
 ---
@@ -137,10 +139,9 @@ the corresponding common-config servers until migrated.
 
 | Service | Common Server | Cline Exception | Notes |
 |---------|--------------|-----------------|-------|
+| `amd.atlassian.net` | `atlassian-gateway` | `jira` (local stdio) | `get_issue(instance="amd", ...)` |
 | `ontrack-internal.amd.com` | `ontrack-internal` | `jira` (local stdio) | `get_issue(instance="ontrack_internal", ...)` |
 | `ontrack.amd.com` | — | `jira` (local stdio) | `get_issue(instance="ontrack_external", ...)` — no token configured yet |
-
-AMD cloud Jira (`amd.atlassian.net`) and ReviewBoard are not configured for Cline.
 
 #### Building Local Servers
 
@@ -155,6 +156,12 @@ npm run build
 #### Example Tool Calls (Cline)
 
 ```
+# AMD cloud Jira
+get_issue(instance="amd", issue_key="FWDEV-1234")
+
+# Pensando cloud Jira
+get_issue(instance="pensando", issue_key="IFOESW-1234")
+
 # OnTrack internal
 get_issue(instance="ontrack_internal", issue_key="PROJ-123")
 
