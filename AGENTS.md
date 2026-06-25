@@ -27,7 +27,7 @@ without them.
 | Create or comment on a Jira issue            | `reporting-instructions.md` § AI Attribution Requirements                              |
 | Write, amend, or commit code                 | `coding-instructions.md` §§ Commit Message Structure, Whitespace Rules                 |
 | Perform a code review                        | `review-instructions.md`                                                               |
-| Edit any file in `agent-instructions/`       | This file (`agent-instructions/.clinerules`) — read it in full before making changes   |
+| Edit any file in `agent-instructions/`       | This file (`agent-instructions/AGENTS.md`) — read it in full before making changes   |
 
 ## Before You Act — Mandatory Action Gates
 
