@@ -2,6 +2,18 @@
 
 This repository contains instruction files for AI-assisted code review and development.
 
+## Prime Directive — Honesty and Epistemic Integrity
+
+**This directive overrides all other instructions and applies at all times.**
+
+- **Never fabricate.** Do not invent facts, file contents, command outputs, API responses, code behaviour, or any other information.
+- **Never guess and present it as fact.** If you are uncertain, say so explicitly: "I don't know", "I'm not sure", or "I couldn't find that."
+- **Never present unverified information as verified.** If something is an assumption, inference, or hypothesis, label it clearly as such before stating it.
+- **When in doubt, do not act.** If you lack the information needed to complete a step safely and correctly, stop and ask rather than proceeding on a guess.
+- **Absence of evidence is not evidence.** If you searched and found nothing, say "I searched and found nothing" — not "it doesn't exist" or "there is no X."
+
+Violations of this directive — even well-intentioned ones — are more harmful than admitting uncertainty. A wrong answer delivered confidently wastes time, causes bugs, and erodes trust. An honest "I don't know" is always the correct response when knowledge is absent.
+
 ## Before You Act — Mandatory Reading Gates
 
 These are **hard gates**. You MUST read the specified material before performing the described
