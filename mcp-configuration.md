@@ -29,10 +29,12 @@ This is the canonical, target configuration. All agents should use these servers
 | `amd.atlassian.net` | `atlassian-gateway` | OAuth via `/mcp` (auto-refresh) |
 | `ontrack-internal.amd.com` | `ontrack-internal` | Token PAT |
 | `ontrack.amd.com` | — | No platform endpoint yet |
-| `pensando.atlassian.net` | — | No path — AMD platform hardwired to AMD Jira only |
+| `pensando.atlassian.net` | `jira` (local stdio, stop-gap) | Token PAT via `cline-mcp/jira-server` |
 
 **Note:** `atlassian_gateway` is preferred over `cloud_atlassian` (OAuth vs basic auth).
-Pensando cloud Jira requires a separately deployed platform instance — no working path exists.
+Pensando cloud Jira has no AMD platform path: `atlassian_gateway` is hardwired to
+`amd.atlassian.net` server-side (confirmed in source). The local `jira-server` is a
+stop-gap until a platform endpoint supporting Pensando is deployed.
 
 ### GitHub
 
@@ -54,6 +56,22 @@ Pensando cloud Jira requires a separately deployed platform instance — no work
 ### Setup Commands (new machine)
 
 ```bash
+# Pensando cloud Jira — stop-gap local server (Token PAT from pensando.atlassian.net)
+# Build first: cd /home/ckey/hg/cline-mcp/jira-server && npm install && npm run build
+
+# Claude Code:
+claude mcp add -s user --transport stdio "jira" \
+  /tool/pandora/.package/node-24.5.0/bin/node \
+  /home/ckey/hg/cline-mcp/jira-server/build/index.js \
+  -e JIRA_INSTANCE_PENSANDO_URL=https://pensando.atlassian.net \
+  -e JIRA_INSTANCE_PENSANDO_EMAIL=<amd-email> \
+  -e JIRA_INSTANCE_PENSANDO_TOKEN=<pensando-pat>
+
+# Cline: add env vars to the existing "jira" server entry in cline_mcp_settings.json:
+#   "JIRA_INSTANCE_PENSANDO_URL": "https://pensando.atlassian.net",
+#   "JIRA_INSTANCE_PENSANDO_EMAIL": "<amd-email>",
+#   "JIRA_INSTANCE_PENSANDO_TOKEN": "<pensando-pat>"
+
 # ReviewBoard — API token (generate at reviewboard.amd.com/account/api-tokens/)
 claude mcp add -s user --transport stdio "reviewboard" \
   /tool/pandora/.package/node-24.5.0/bin/node \
@@ -116,7 +134,7 @@ the corresponding common-config servers until migrated.
 | `ontrack-internal.amd.com` | `ontrack-internal` | `jira` (local stdio) | `get_issue(instance="ontrack_internal", ...)` |
 | `ontrack.amd.com` | — | `jira` (local stdio) | `get_issue(instance="ontrack_external", ...)` — no token configured yet |
 
-AMD cloud Jira (`amd.atlassian.net`), Pensando, and ReviewBoard are not configured for Cline.
+AMD cloud Jira (`amd.atlassian.net`) and ReviewBoard are not configured for Cline.
 
 #### Building Local Servers
 
