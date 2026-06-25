@@ -193,7 +193,7 @@ GPU_ADDR=$(lspci -d :75c1 -D | awk '{print $1}')
     --location ${GPU_ADDR} \
     @package/suites/mi450/slt/soc/bu_config_vm.opt \
     @package/suites/mi450/slt/soc/bu_config.opt \
-    -c @/home/ckey/diags/die_full_config-cjk.json \
+    -c @/myhome/diags/die_full_config-cjk.json \
     -c +/diag/mi450/npa/gpuId=1 \
     -x ifoe.loopback.2.2 \
     -p importer_id=0 \
@@ -209,7 +209,8 @@ GPU_ADDR=$(lspci -d :75c1 -D | awk '{print $1}')
 ```
 
 **Notes:**
-- The `-c @/home/ckey/diags/die_full_config-cjk.json` config file location is temporary — a better home for this file is TBD
+- Inside the VM, `/myhome` is the virtfs mount of `/home/ckey` on the host
+- The `-c @/myhome/diags/die_full_config-cjk.json` config file location is temporary — a better home for this file is TBD
 - `--location` targets the GPU device (`75c1`), not the IFoE device
 - The diags binary is in `/simnow/diags/` inside the VM (mounted from the host)
 
