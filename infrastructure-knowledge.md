@@ -9,14 +9,14 @@ in `~/.ssh/config` with per-instance identity files.
 
 ### GitHub Instances
 
-| Instance URL | Username | SSH Host | Notes |
-|-------------|----------|----------|-------|
-| `https://github.com` | `ckey-xlnx` | `github.com` | Personal/Xilinx account |
-| `https://github.com` | `ckey_amdeng` | `amdeng%github.com` | AMD org account on public GitHub |
-| `https://github.com` | `cjk32` | `cjk32%github.com` | Personal account |
-| `https://gitenterprise.xilinx.com` | `ckey` | `gitenterprise.xilinx.com` | Xilinx GitHub Enterprise |
-| `https://github.amd.com` | `ckey` | `github.amd.com` | AMD GitHub Enterprise |
-| `https://er.github.amd.com` | `ckey` | `er.github.amd.com` | AMD GHE (external-restricted) |
+| Instance URL | Username | SSH Host | MCP (Claude Code) | MCP (Cline) | Notes |
+|-------------|----------|----------|-------------------|-------------|-------|
+| `https://github.com` | `ckey-xlnx` | `github.com` | `github-ckey-xlnx` | not configured | Personal/Xilinx account |
+| `https://github.com` | `ckey_amdeng` | `amdeng%github.com` | `github-ckey-amdeng` | not configured | AMD org account on public GitHub |
+| `https://github.com` | `cjk32` | `cjk32%github.com` | none | none | Personal account |
+| `https://gitenterprise.xilinx.com` | `ckey` | `gitenterprise.xilinx.com` | none | none | Xilinx GitHub Enterprise |
+| `https://github.amd.com` | `ckey` | `github.amd.com` | none | none | AMD GitHub Enterprise |
+| `https://er.github.amd.com` | `ckey` | `er.github.amd.com` | none | none | AMD GHE (external-restricted) |
 
 ### Repository to Instance Mapping
 
@@ -137,7 +137,7 @@ and only fall back to local custom servers for services not on the platform.
 | Endpoint | Purpose | Notes |
 |----------|---------|-------|
 | `https://mcp-platform.amd.com/mcp/cloud_atlassian/` | AMD and Pensando Jira | OAuth — instance (`amd.atlassian.net` or `pensando.atlassian.net`) chosen at auth time |
-| `https://mcp-platform.amd.com/mcp/github_new` | GitHub | Bearer token header |
+| `https://mcp-platform.amd.com/mcp/github_new` | Public GitHub (`github.com`) | Bearer token (PAT); add once per account |
 | `https://mcp-platform.amd.com/mcp/internal_atlassian` | OnTrack (`ontrack-internal.amd.com`) | Policy-only, not used (no working auth) |
 
 ### Claude Code MCP Configuration
@@ -156,7 +156,8 @@ and only fall back to local custom servers for services not on the platform.
 |--------|----------|------|
 | `amd-atlassian` | `mcp-platform.amd.com/mcp/cloud_atlassian/` | OAuth via `/mcp` — choose AMD instance |
 | `pensando-atlassian` | `mcp-platform.amd.com/mcp/cloud_atlassian/` | OAuth via `/mcp` — choose Pensando instance |
-| `github-new` | `mcp-platform.amd.com/mcp/github_new` | Static Bearer token (GitHub PAT) |
+| `github-ckey-xlnx` | `mcp-platform.amd.com/mcp/github_new` | PAT for `ckey-xlnx` on `github.com` |
+| `github-ckey-amdeng` | `mcp-platform.amd.com/mcp/github_new` | PAT for `ckey_amdeng` on `github.com` |
 
 **To recreate on a new machine:**
 
@@ -167,10 +168,13 @@ claude mcp add --transport http "amd-atlassian" \
 claude mcp add --transport http "pensando-atlassian" \
   "https://mcp-platform.amd.com/mcp/cloud_atlassian/" -s user
 
-# Add GitHub with a personal access token
-claude mcp add --transport http "github-new" \
+# Add GitHub accounts (PATs stored separately — do not commit)
+claude mcp add --transport http "github-ckey-xlnx" \
   "https://mcp-platform.amd.com/mcp/github_new" -s user \
-  --header "Authorization: Bearer <github_pat>"
+  --header "Authorization: Bearer <ckey-xlnx-pat>"
+claude mcp add --transport http "github-ckey-amdeng" \
+  "https://mcp-platform.amd.com/mcp/github_new" -s user \
+  --header "Authorization: Bearer <ckey-amdeng-pat>"
 ```
 
 After adding each Atlassian server, open Claude Code and run `/mcp` to authenticate via
