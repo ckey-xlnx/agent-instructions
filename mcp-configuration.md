@@ -36,6 +36,10 @@ Pensando cloud Jira has no AMD platform path: `atlassian_gateway` is hardwired t
 `amd.atlassian.net` server-side (confirmed in source). The local `jira-server` is a
 stop-gap until a platform endpoint supporting Pensando is deployed.
 
+**Confluence:** the `atlassian-gateway` server is Atlassian-wide and nominally advertises
+Confluence tools (`confluence_*`), but in practice only the Jira tools are registered —
+`confluence_*` calls return `Unknown tool`. Treat the gateway as **Jira-only** until this changes.
+
 ### GitHub
 
 | Instance / Account | Server |
