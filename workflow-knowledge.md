@@ -206,13 +206,19 @@ GPU_ADDR=$(lspci -d :75c1 -D | awk '{print $1}')
     -c +/diag/gpu/vml2/global/mmvm/silenceTimeouts=true \
     -c +/diag/gpu/vml2/global/timeoutInterval=500ms \
     -c +/log/root/level=Debug \
-    2>&1 | tee /myhome/diags/tng_executor.log
+    2>&1 | tee /tmp/tng_executor.log
 ```
 
 **Important:** Run the xncmdclient setup script once per SimNow boot. The tng_executor test can then be run multiple times without repeating setup.
 
+**Where to write logs and tempfiles (IMPORTANT):**
+- **`/myhome` is mounted READ-ONLY inside the QEMU VM.** It is the virtfs mount of `/home/ckey` on the host and is for *reading* inputs only (e.g. the config file). Any attempt to write under `/myhome` (logs, tempfiles, `tee` output) will be silently dropped — the command's stdout still streams back, so the failure is easy to miss until you go looking for the file and it isn't there.
+- **Write all logs and tempfiles to `/tmp` inside the VM** (e.g. `tee /tmp/tng_executor.log`). `/tmp` is writable and local to the VM.
+- To retrieve a log to the host afterwards, either `cat` it back over SSH, or `scp` it off the VM. It will **not** appear on the host automatically — `/tmp` in the VM is not shared with the host.
+- Do **not** rely on writing into the VM's `/simnow` mount either; treat host-mounted paths as read-only from inside the VM.
+
 **Notes:**
-- Inside the VM, `/myhome` is the virtfs mount of `/home/ckey` on the host
+- Inside the VM, `/myhome` is the read-only virtfs mount of `/home/ckey` on the host — read inputs from here, never write to it (see above)
 - The `-c @/myhome/diags/die_full_config-cjk.json` config file location is temporary — a better home for this file is TBD
 - `--location` targets the GPU device (`75c1`), not the IFoE device
 - The diags binary is in `/simnow/diags/` inside the VM (mounted from the host)
