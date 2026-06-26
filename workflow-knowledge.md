@@ -205,8 +205,11 @@ GPU_ADDR=$(lspci -d :75c1 -D | awk '{print $1}')
     -c +/diag/gpu/vml2/global/gcvm/silenceTimeouts=true \
     -c +/diag/gpu/vml2/global/mmvm/silenceTimeouts=true \
     -c +/diag/gpu/vml2/global/timeoutInterval=500ms \
-    -c +/log/root/level=Debug
+    -c +/log/root/level=Debug \
+    2>&1 | tee /myhome/diags/tng_executor.log
 ```
+
+**Important:** Run the xncmdclient setup script once per SimNow boot. The tng_executor test can then be run multiple times without repeating setup.
 
 **Notes:**
 - Inside the VM, `/myhome` is the virtfs mount of `/home/ckey` on the host
