@@ -7,12 +7,18 @@ description: >
   on subsystem emulation / ss-emu, run etx-meson/etx-ninja/emu-post-ninja, or
   figure out what to rebuild after changing model/chip/ip/env code. (This is
   the subsystem-emulation build path only; building ifoe-arch-model as part of
-  TE is a separate flow not covered here.)
+  TE is a separate flow not covered here.) Runs at the atl site.
 ---
 
 # Build ifoe-arch-model (subsystem emulation)
 
 **Build tool**: Meson + Ninja, with additional Makefile-based post-processing.
+
+## Site: atl
+
+Run everything below on an **atl** machine. The model tree and the `/proj/...`
+paths in this skill are atl-local (i.e. `atl:/proj/...`; see `infra-amd-sites`).
+A "not found" path usually means you are not on an atl host.
 
 ifoe-arch-model can be built in more than one configuration; this skill covers
 the **self-contained subsystem-emulation (ss-emu)** build only. Building it as
@@ -22,7 +28,7 @@ part of the TE (Test Environment) is a separate flow not documented here.
 
 Directory structure:
 - Clone ifoe-arch-model into a copy of a released subsystem emulation model.
-  Example: `/proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z/ifoe-arch-model`
+  Example: `atl:/proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z/ifoe-arch-model`
 - Alongside ifoe-arch-model, clone additional repos that replace content within
   the released model:
   - `chip` repo at `${MODEL}/chip`
