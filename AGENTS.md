@@ -95,15 +95,6 @@ When starting a task, if it's unclear which folder the work should be done in, c
 - Work patterns (bug fixes, features, cleanup)
 - Whitespace rules and TODO/FIXME requirements
 
-**review-instructions.md**
-- Orienting stub: the review process now lives in the `ckey-review` skill (`.claude/skills/ckey-review/`)
-- The skill covers the four capabilities (summary, analysis, interactive feedback, learning), ReviewBoard MCP integration, and best practices, loading on demand
-
-**repo-specific-knowledge.md**
-- Repository-specific knowledge for all development tasks
-- Customize for each repository you work with
-- Covers: naming conventions, architecture, current priorities, common issues, external dependencies
-
 **agent-tooling-instructions.md**
 - Agent-specific tooling mechanics and usage guidelines
 - How agents should interact with development tools
@@ -126,29 +117,25 @@ When starting a task, if it's unclear which folder the work should be done in, c
 - Test issue guidelines
 - Maintains consistency with code commit attribution
 
-**operational-knowledge.md**
-- Operational/administrative tasks: installing releases, managing artifacts, deploying software
-- Weakly repo-associated tasks that are not primarily about building or developing code
-- Concrete procedures now live as on-demand skills under `.claude/skills/` (e.g. SimNow release installation in `.claude/skills/simnow-install-release/`); this file is the orienting index for them
-
-**workflow-knowledge.md**
-- End-to-end multi-component workflows spanning multiple repositories or artifacts
-- Concrete workflows now live as on-demand skills under `.claude/skills/` (e.g. SimNow launch in `.claude/skills/simnow-launch/` and SLT datapath-test in `.claude/skills/simnow-datapath-test/`); this file is the orienting index for them
-- Consult alongside repo-specific-knowledge.md and operational-knowledge.md as needed
-
 **.claude/skills/**
 - Claude Code skills: task-specific and reference content that loads on demand (progressive reveal) when a request matches the skill's description, rather than always consuming context
 - Discovered globally via the `~/.claude/skills` symlink (set up by the dotfiles `link-dotfiles.sh`)
+- Skills now hold the knowledge that previously lived in standalone files:
+  - **Repository-specific knowledge** (style, concerns, dependencies) — `repo-<name>` reference skills (e.g. `repo-mpifoe-fw`, `repo-simnow`, `repo-ifoe-arch-model`); per-repo fine-grained style also in each repo's `.coding-style.md`
+  - **Build procedures** — `build-<target>` skills (e.g. `build-mpifoe-fw`, `build-simnow`)
+  - **Operational/admin tasks** (release install, artifacts) — e.g. `simnow-install-release`
+  - **End-to-end workflows** (multi-repo/artifact) — e.g. `simnow-launch`, `simnow-datapath-test`
+  - **Code review process** — the `ckey-review` skill
+  - **Firmware postcodes** — `firmware-postcodes`
 - To create or migrate a skill, use the `writing-skills` skill — it covers layout, frontmatter, the one-level-deep discovery constraint, and the migration/verification pattern
 
 ## Usage
 
-- For normal coding tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
-- When performing code reviews or analyzing commits, load the **ckey-review** skill and reference **coding-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
-- For debugging tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
+- For normal coding tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, the relevant **`repo-<name>`** reference skill, and **infrastructure-knowledge.md**
+- When performing code reviews or analyzing commits, load the **ckey-review** skill and reference **coding-instructions.md**, the relevant **`repo-<name>`** reference skill, and **infrastructure-knowledge.md**
+- For debugging tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, the relevant **`repo-<name>`** reference skill, and **infrastructure-knowledge.md**
 - For tool usage mechanics (debuggers, build systems, etc.), reference **agent-tooling-instructions.md**
 - For infrastructure information (Jira instances, service mappings, etc.), reference **infrastructure-knowledge.md**
 - For MCP server names, auth, and tool call syntax per agent, reference **mcp-configuration.md**
 - When creating Jira issues or other external reports, reference **reporting-instructions.md**
-- For operational/admin tasks (release installation, artifact management), reference **operational-knowledge.md**
-- For end-to-end multi-component workflows, reference **workflow-knowledge.md**
+- For operational/admin tasks, building, or end-to-end workflows, the relevant skill loads on demand (see **.claude/skills/** above)
