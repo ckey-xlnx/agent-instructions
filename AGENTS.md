@@ -26,7 +26,7 @@ without them.
 | Use any `git` command                        | `agent-tooling-instructions.md` § Git Commands                                         |
 | Create or comment on a Jira issue            | `reporting-instructions.md` § AI Attribution Requirements                              |
 | Write, amend, or commit code                 | `coding-instructions.md` §§ Commit Message Structure, Whitespace Rules                 |
-| Perform a code review                        | `review-instructions.md`                                                               |
+| Perform a code review                        | the `ckey-review` skill (`.claude/skills/ckey-review/`) — load it before reviewing     |
 | Edit any file in `agent-instructions/`       | This file (`agent-instructions/AGENTS.md`) — read it in full before making changes   |
 
 ## Before You Act — Mandatory Action Gates
@@ -96,10 +96,8 @@ When starting a task, if it's unclear which folder the work should be done in, c
 - Whitespace rules and TODO/FIXME requirements
 
 **review-instructions.md**
-- Automated review request feedback process
-- Four main capabilities: summary, analysis, interactive feedback, learning
-- Integration with ReviewBoard MCP server
-- Best practices for automated analysis and human oversight
+- Orienting stub: the review process now lives in the `ckey-review` skill (`.claude/skills/ckey-review/`)
+- The skill covers the four capabilities (summary, analysis, interactive feedback, learning), ReviewBoard MCP integration, and best practices, loading on demand
 
 **repo-specific-knowledge.md**
 - Repository-specific knowledge for all development tasks
@@ -146,7 +144,7 @@ When starting a task, if it's unclear which folder the work should be done in, c
 ## Usage
 
 - For normal coding tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
-- When performing code reviews or analyzing commits, reference **coding-instructions.md**, **review-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
+- When performing code reviews or analyzing commits, load the **ckey-review** skill and reference **coding-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
 - For debugging tasks, reference **coding-instructions.md**, **agent-tooling-instructions.md**, **repo-specific-knowledge.md**, and **infrastructure-knowledge.md**
 - For tool usage mechanics (debuggers, build systems, etc.), reference **agent-tooling-instructions.md**
 - For infrastructure information (Jira instances, service mappings, etc.), reference **infrastructure-knowledge.md**
