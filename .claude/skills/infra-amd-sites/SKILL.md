@@ -47,3 +47,28 @@ locally, suspect it lives at another site.
 | `cac` | CACO Cadence Colo                      |
 | `dfc` | Dallas/Fort Worth Data Center (DFDC)   |
 | `sac` | Sacramento Data Center (SADC)          |
+
+## Per-site access
+
+How you get a machine to run on differs by site.
+
+### VDI sites (persistent per-user machine)
+
+At these sites each user has their own persistent VDI (virtual desktop).
+
+| Site  | ckey's VDI   | Notes                                  |
+|-------|--------------|----------------------------------------|
+| `xcb` | `xcbckey42x` |                                        |
+| `xsj` | `xsjckey41x` | may expire                             |
+
+### etx-allocated sites (dynamically allocated machine)
+
+At `atl`, `sac`, `cac`, and `dfc`, users do **not** have a fixed machine.
+A system is dynamically allocated via **etx**.
+
+Caveats:
+
+- Allocations **time out if there is no graphical login**.
+- An **ssh session to an unallocated system will time out** — so you cannot
+  rely on sshing straight to a host at these sites without an active etx
+  allocation backing it.
