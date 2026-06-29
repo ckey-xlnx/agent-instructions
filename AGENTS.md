@@ -131,7 +131,7 @@ When starting a task, if it's unclear which folder the work should be done in, c
 **operational-knowledge.md**
 - Operational/administrative tasks: installing releases, managing artifacts, deploying software
 - Weakly repo-associated tasks that are not primarily about building or developing code
-- Examples: SimNow release installation, artifact management
+- Concrete procedures now live as on-demand skills under `.claude/skills/` (e.g. SimNow release installation in `.claude/skills/simnow/install-release/`); this file is the orienting index for them
 
 **workflow-knowledge.md**
 - End-to-end multi-component workflows spanning multiple repositories or artifacts
