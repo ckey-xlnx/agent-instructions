@@ -135,8 +135,13 @@ When starting a task, if it's unclear which folder the work should be done in, c
 
 **workflow-knowledge.md**
 - End-to-end multi-component workflows spanning multiple repositories or artifacts
-- Examples: launching SimNow, connecting the arch model, running diagnostics, collecting results
+- Concrete workflows now live as on-demand skills under `.claude/skills/` (e.g. SimNow launch and SLT datapath-test in `.claude/skills/simnow/`); this file is the orienting index for them
 - Consult alongside repo-specific-knowledge.md and operational-knowledge.md as needed
+
+**.claude/skills/**
+- Claude Code skills: task-specific procedures that load on demand (progressive reveal) when their description matches the request, rather than always consuming context
+- Each skill is a `SKILL.md` with YAML frontmatter (`name`, `description`) plus the procedure body
+- Discovered globally via the `~/.claude/skills` symlink (set up by the dotfiles `link-dotfiles.sh`)
 
 ## Usage
 
