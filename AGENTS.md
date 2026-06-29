@@ -129,17 +129,17 @@ When starting a task, if it's unclear which folder the work should be done in, c
 **operational-knowledge.md**
 - Operational/administrative tasks: installing releases, managing artifacts, deploying software
 - Weakly repo-associated tasks that are not primarily about building or developing code
-- Concrete procedures now live as on-demand skills under `.claude/skills/` (e.g. SimNow release installation in `.claude/skills/simnow/install-release/`); this file is the orienting index for them
+- Concrete procedures now live as on-demand skills under `.claude/skills/` (e.g. SimNow release installation in `.claude/skills/simnow-install-release/`); this file is the orienting index for them
 
 **workflow-knowledge.md**
 - End-to-end multi-component workflows spanning multiple repositories or artifacts
-- Concrete workflows now live as on-demand skills under `.claude/skills/` (e.g. SimNow launch and SLT datapath-test in `.claude/skills/simnow/`); this file is the orienting index for them
+- Concrete workflows now live as on-demand skills under `.claude/skills/` (e.g. SimNow launch in `.claude/skills/simnow-launch/` and SLT datapath-test in `.claude/skills/simnow-datapath-test/`); this file is the orienting index for them
 - Consult alongside repo-specific-knowledge.md and operational-knowledge.md as needed
 
 **.claude/skills/**
-- Claude Code skills: task-specific procedures that load on demand (progressive reveal) when their description matches the request, rather than always consuming context
-- Each skill is a `SKILL.md` with YAML frontmatter (`name`, `description`) plus the procedure body
+- Claude Code skills: task-specific and reference content that loads on demand (progressive reveal) when a request matches the skill's description, rather than always consuming context
 - Discovered globally via the `~/.claude/skills` symlink (set up by the dotfiles `link-dotfiles.sh`)
+- To create or migrate a skill, use the `writing-skills` skill — it covers layout, frontmatter, the one-level-deep discovery constraint, and the migration/verification pattern
 
 ## Usage
 
