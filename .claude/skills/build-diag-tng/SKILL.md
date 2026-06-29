@@ -5,7 +5,7 @@ description: >
   Ninja, including the Pandora "bodge" Conan profile and cache workaround. Use
   when asked to build diag_tng, build the diags, build tng_executor, set up the
   Conan bodge profile, or build diagnostics in the XCE/Pandora or DFC
-  environment. (To run the diags, use simnow-datapath-test instead.)
+  environment. (To run the diags, use dev-workflow-simnow-datapath-test instead.)
 ---
 
 # Build diag_tng (Diagnostics Test Software)

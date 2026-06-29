@@ -1,5 +1,5 @@
 ---
-name: vscode-server-cleanup
+name: env-workflow-vscode-server-cleanup
 description: >
   Reclaim home-directory quota by cleaning up accumulated VS Code Server data
   under ~/.vscode-server/ (can reach 6GB+). Use when asked to clean up VS Code

@@ -5,7 +5,7 @@ description: >
   CMake/Ninja on a Pandora build server. Use when asked to build SimNow,
   configure a SimNow release or debug build, package a SimNow zip, or set up
   a SimNow build session on the build server. (For installing a pre-built
-  release, use simnow-install-release instead.)
+  release, use admin-workflow-simnow-install-release instead.)
 ---
 
 # Build SimNow

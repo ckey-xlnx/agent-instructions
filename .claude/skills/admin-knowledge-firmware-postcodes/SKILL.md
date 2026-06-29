@@ -1,5 +1,5 @@
 ---
-name: firmware-postcodes
+name: admin-knowledge-firmware-postcodes
 description: >
   Reference for interpreting firmware postcodes / status registers across the
   IFoE firmwares (ASP-FMC FW_STATUS_REG, and mpifoe-fw postcodes). Use when
@@ -91,4 +91,4 @@ Example error state `FW_STATUS_REG = 0xAA0A000C`:
 _TODO: document the mpifoe-fw postcode scheme (format, where the enum/values
 are defined, and how to read them). Known data point so far: the mpifoe
 postcode monitor shows `0x800f0000` at SimNow steady state (see the
-simnow-launch skill)._
+dev-workflow-simnow-launch skill)._

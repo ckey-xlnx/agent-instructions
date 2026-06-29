@@ -27,7 +27,7 @@ output files look identical.
 
 The three valid platforms for mpifoe-fw are:
 - `-p silicon` — real silicon (standard production target)
-- `-p simnow` — **for running under SimNow** (see the `simnow-launch` skill)
+- `-p simnow` — **for running under SimNow** (see the `dev-workflow-simnow-launch` skill)
 - `-p emu` — emulation
 
 (`build.py --help` also lists `ss-emu` and `ss-c-model`, but there is no
@@ -59,7 +59,7 @@ Environment:
 Build directory: `build/fw.mi450-a0.<platform>_eftest/zephyr/` (created in the
 repo root). Each build produces the same set of artifacts, e.g.:
 - `zephyr.elf` — firmware ELF binary (used for memory analysis)
-- `mpifoe_fw.hbin` — the `.hbin` image (e.g. `simnow-launch` consumes the one
+- `mpifoe_fw.hbin` — the `.hbin` image (e.g. `dev-workflow-simnow-launch` consumes the one
   from a `-p simnow` build via its `-fw` flag)
 
 Substitute the platform you built into the path, e.g.

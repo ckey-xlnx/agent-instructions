@@ -73,7 +73,7 @@ For ASP firmware changes (like P2PSync):
 2. It cannot be replaced at SimNow launch time like mpifoe FW.
 3. It requires rebuilding the full IFWI with the modified ASP components.
 
-For reference, mpifoe FW changes are injected at launch by the simnow-launch
+For reference, mpifoe FW changes are injected at launch by the dev-workflow-simnow-launch
 script when using `.hbin`:
 ```bash
 $SIMNOW_SHARED/IFWI/ifwi-bosh $IFWI $FWNAME $SIMNOW_WORKDIR/IFWI.boshed.sbin

@@ -1,17 +1,17 @@
 ---
-name: simnow-datapath-test
+name: dev-workflow-simnow-datapath-test
 description: >
   Configure IFoE firmware and run the SLT datapath (loopback) diagnostics test
   inside the SimNow QEMU VM. Use when asked to run the diags test, run the
   datapath test, run SLT diagnostics, run the loopback test, run tng_executor,
   configure xncmdclient, or set up the IFoE firmware for testing.
-  Requires SimNow and QEMU to already be running (see simnow-launch skill).
+  Requires SimNow and QEMU to already be running (see dev-workflow-simnow-launch skill).
 ---
 
 # SimNow Datapath Test Workflow
 
 Requires SimNow and QEMU to be up and the IFoE device enumerated.
-Run the `simnow-launch` skill first if not already done.
+Run the `dev-workflow-simnow-launch` skill first if not already done.
 
 ## Devices in the VM
 

@@ -1,5 +1,5 @@
 ---
-name: simnow-install-release
+name: admin-workflow-simnow-install-release
 description: >
   Download, unpack, and permission-fix a SimNow release from Artifactory.
   Use when asked to install a SimNow release, fetch/download a new SimNow

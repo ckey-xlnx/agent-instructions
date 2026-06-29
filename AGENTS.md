@@ -120,14 +120,16 @@ When starting a task, if it's unclear which folder the work should be done in, c
 **.claude/skills/**
 - Claude Code skills: task-specific and reference content that loads on demand (progressive reveal) when a request matches the skill's description, rather than always consuming context
 - Discovered globally via the `~/.claude/skills` symlink (set up by the dotfiles `link-dotfiles.sh`)
-- Skills now hold the knowledge that previously lived in standalone files:
-  - **Repository-specific knowledge** (style, concerns, dependencies) — `repo-<name>` reference skills (e.g. `repo-mpifoe-fw`, `repo-simnow`, `repo-ifoe-arch-model`); per-repo fine-grained style also in each repo's `.coding-style.md`
-  - **Build procedures** — `build-<target>` skills (e.g. `build-mpifoe-fw`, `build-simnow`)
-  - **Operational/admin tasks** (release install, artifacts) — e.g. `simnow-install-release`
-  - **End-to-end workflows** (multi-repo/artifact) — e.g. `simnow-launch`, `simnow-datapath-test`
-  - **Code review process** — the `ckey-review` skill
-  - **Firmware postcodes** — `firmware-postcodes`
-- To create or migrate a skill, use the `writing-skills` skill — it covers layout, frontmatter, the one-level-deep discovery constraint, and the migration/verification pattern
+- Skill names follow a `<domain>-<kind>-<subject>` taxonomy (domains: `dev`, `admin`, `env`, `meta`; kinds: `workflow`, `knowledge`), with blessed shorthands `build-` (=dev-workflow-build), `repo-` (=dev-knowledge-repo), `infra-` (=admin-knowledge-infra), and `ckey-review` kept verbatim. The canonical definition lives in the `meta-writing-skills` skill.
+- The skills hold knowledge that previously lived in standalone files, by category:
+  - **dev-knowledge** — per-repo reference: `repo-mpifoe-fw`, `repo-simnow`, `repo-ifoe-arch-model` (plus each repo's `.coding-style.md` for fine-grained style)
+  - **dev-workflow** — builds (`build-mpifoe-fw`, `build-simnow`, `build-asp`, `build-diag-tng`, `build-ifoe-arch-model-ss-emu`) and simulation (`dev-workflow-simnow-launch`, `dev-workflow-simnow-datapath-test`)
+  - **admin-workflow** — `admin-workflow-simnow-install-release`
+  - **admin-knowledge** — `infra-amd-sites`, `infra-grid-atl`, `admin-knowledge-firmware-postcodes`
+  - **env-workflow** — `env-workflow-vscode-server-cleanup`
+  - **code review** — `ckey-review`
+  - **meta** — `meta-writing-skills`
+- This list is illustrative, not exhaustive; the always-loaded skill descriptions are the source of truth for what exists. To create or migrate a skill, use the `meta-writing-skills` skill — it covers the taxonomy, layout, frontmatter, the one-level-deep discovery constraint, and the migration/verification pattern.
 
 ## Usage
 

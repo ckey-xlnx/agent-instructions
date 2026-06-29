@@ -1,5 +1,5 @@
 ---
-name: simnow-launch
+name: dev-workflow-simnow-launch
 description: >
   Launch SimNow for SLT testing, start QEMU, verify IFoE device enumeration,
   and apply required register bodges. Use when asked to launch SimNow, start

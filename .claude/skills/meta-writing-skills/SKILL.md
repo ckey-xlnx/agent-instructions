@@ -1,5 +1,5 @@
 ---
-name: writing-skills
+name: meta-writing-skills
 description: >
   How to author a new Claude Code skill in this repo (agent-instructions):
   directory layout, frontmatter, naming, discovery constraints, and the
@@ -26,9 +26,39 @@ is silently ignored (Claude Code issue #10238, open as of mid-2026). This was
 confirmed empirically here: nested skills never appeared in the model's
 available-skills list; flattening fixed it immediately.
 
-Encode grouping in the **name prefix**, not a directory:
-- `simnow-launch`, `simnow-datapath-test`, `simnow-install-release`
-- `repo-mpifoe-fw` (per-repo reference)
+Encode grouping in the **name prefix**, not a directory. Every skill name
+MUST start with a category prefix from the taxonomy below.
+
+## Naming taxonomy (canonical)
+
+Skill names are `<domain>-<kind>-<subject>`.
+
+**Domains:** `dev` (developing the thing) · `admin` (operating/knowing the
+thing itself, as distinct from developing it) · `env` (the user's working
+environment) · `meta` (authoring skills / tooling about this repo).
+
+**Kinds:** `workflow` (a task you perform — verb-triggered) · `knowledge`
+(reference applied inline — context-triggered).
+
+The `dev`/`admin` split is deliberate: knowledge of how to *develop* a thing
+(e.g. firmware build flags) is `dev`; knowledge of the thing *itself* or how to
+operate it (e.g. site codes, firmware postcodes) is `admin`.
+
+**Blessed shorthands** — these expand to a `<domain>-<kind>` prefix plus a
+conventional subject segment; use the shorthand, not the long form:
+
+| Shorthand | Expands to | For |
+|-----------|------------|-----|
+| `build-`  | `dev-workflow-build-`   | building a specific target |
+| `repo-`   | `dev-knowledge-repo-`   | per-repository reference |
+| `infra-`  | `admin-knowledge-infra-`| infrastructure reference (sites, grids) |
+| `ckey-review` | (verbatim)          | the review skill — kept short as a command |
+
+Skills with no blessed shorthand use the full prefix, e.g.
+`dev-workflow-simnow-launch`, `admin-workflow-simnow-install-release`,
+`admin-knowledge-firmware-postcodes`, `env-workflow-vscode-server-cleanup`,
+`meta-writing-skills`. A new shorthand can be added here later if a prefix
+becomes common enough to be worth abbreviating.
 
 ## File format
 
@@ -54,13 +84,15 @@ Body: the procedure or reference content.
   explicit-only (`/name`), e.g. a destructive action you never want
   auto-triggered.
 
-## Two kinds of content
+## The two kinds (workflow vs knowledge)
 
-- **Task skill** — step-by-step procedure, triggered by a verb ("build X",
+The `<kind>` segment reflects which of these a skill is:
+
+- **workflow** — step-by-step procedure, triggered by a verb ("build X",
   "launch Y"). Action-oriented.
-- **Reference skill** — conventions / domain knowledge applied inline,
-  triggered by context ("working on repo Z"). Per-repo reference triggers
-  reliably because the repo name/paths appear in the request.
+- **knowledge** — conventions / domain reference applied inline, triggered by
+  context ("working on repo Z"). Per-subject reference triggers reliably
+  because the subject name/paths appear in the request.
 
 ## Discovery mechanics
 

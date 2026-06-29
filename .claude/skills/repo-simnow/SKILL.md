@@ -4,7 +4,7 @@ description: >
   Repository reference for the simnow repo: external dependencies and how they
   are managed. Use when writing, reviewing, or debugging code in simnow,
   especially when touching externals/ or the ifoe_ss_model dependency. (To
-  build SimNow use build-simnow; to install a release use simnow-install-release.)
+  build SimNow use build-simnow; to install a release use admin-workflow-simnow-install-release.)
 ---
 
 # simnow — Repository Reference
