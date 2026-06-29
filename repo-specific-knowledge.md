@@ -19,48 +19,6 @@ This file contains repository-specific knowledge applicable to all development t
 
 ---
 
-## External Dependencies and Submodules
-
-### ifoe_ss_model (simnow repository)
-
-**Location**: `externals/ifoe_ss_model`
-
-**Purpose**: Provides the IFOE subsystem model for simulation
-
-**How it works**:
-- Functions like a git submodule but managed through CMake
-- The required revision is specified in `externals/CMakeLists.txt`
-- When building with ifoe_ss_model support enabled, `externals/CMakeLists.txt` will:
-  1. Clone the repository if not already present
-  2. Check out the correct revision as specified in the CMakeLists.txt
-  3. Make it available for the build
-
-**Key points**:
-- Not a true git submodule - managed by the build system
-- Revision updates are done by modifying `externals/CMakeLists.txt`
-- The repository is only cloned/updated when building with ifoe_ss_model support
-
-### mpifoe-fw (ifoe-arch-model repository)
-
-**Location**: `external/mpifoe-fw` (subrepo within ifoe-arch-model)
-
-**Purpose**: Main firmware repository that compiles firmware for real silicon (Zephyr RTOS)
-
-**How it's used in ifoe-arch-model**:
-- The IFoE subsystem model doesn't include the management CPU
-- All firmware functionality must run natively on X86 host
-- ifoe-arch-model compiles code from mpifoe-fw to drive the hardware
-- Provides sufficient stubs for Zephyr functionality to make this work
-- Goal: Exercise as much real firmware as possible on subsystem emulation
-- Current scope: Hardware abstraction layer and configuration logic
-
-**Key points**:
-- Standard git submodule
-- Enables testing firmware code without real hardware
-- Simplifies testing and debug by running on host system
-
----
-
 ## Coding Style Specifics
 
 ### Naming Conventions
