@@ -44,6 +44,13 @@ Key flags:
 - `-r` — explicit release directory (use release build, not debug)
 - `-fw` — ToT mpifoe-fw firmware (`.hbin` format, injected into bundled IFWI)
 
+**Firmware prerequisite:** the `-fw` `.hbin` must come from a **simnow-platform**
+build of mpifoe-fw (`build.py -p simnow`) — see the `build-mpifoe-fw` skill. A
+simnow build differs from a silicon build because SimNow has some mismodelled or
+missing hardware that the firmware must cope with; a silicon-platform build will
+misbehave under SimNow even though it produces the same artifact format. Build
+with `-p simnow` first if `mpifoe_fw.hbin` is missing or stale.
+
 Script location: `scripts/simnow-launch/sim222.IFoE_link_0_to_1.sh` in the `mpifoe-fw` repo (`origin/main`).
 
 ## Step 2: Wait for steady state
