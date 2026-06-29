@@ -1,19 +1,22 @@
 ---
-name: build-ifoe-arch-model
+name: build-ifoe-arch-model-ss-emu
 description: >
-  Configure and build ifoe-arch-model on subsystem emulation (meson + ninja +
-  Makefile post-processing), including environment setup and rebuild rules.
-  Use when asked to build ifoe-arch-model, build the arch model on subsystem
-  emulation, run etx-meson/etx-ninja/emu-post-ninja, or figure out what to
-  rebuild after changing model/chip/ip/env code.
+  Build ifoe-arch-model in its self-contained subsystem-emulation
+  configuration (meson + ninja + Makefile post-processing), including
+  environment setup and rebuild rules. Use when asked to build ifoe-arch-model
+  on subsystem emulation / ss-emu, run etx-meson/etx-ninja/emu-post-ninja, or
+  figure out what to rebuild after changing model/chip/ip/env code. (This is
+  the subsystem-emulation build path only; building ifoe-arch-model as part of
+  TE is a separate flow not covered here.)
 ---
 
 # Build ifoe-arch-model (subsystem emulation)
 
 **Build tool**: Meson + Ninja, with additional Makefile-based post-processing.
 
-This covers the semi-standalone build of ifoe-arch-model on a subsystem
-emulation model. (Use with the TE / Test Environment is a separate flow.)
+ifoe-arch-model can be built in more than one configuration; this skill covers
+the **self-contained subsystem-emulation (ss-emu)** build only. Building it as
+part of the TE (Test Environment) is a separate flow not documented here.
 
 ## Subsystem emulation setup
 

@@ -1,18 +1,17 @@
 ---
-name: build-mpifoe-fw-2
+name: build-mpifoe-fw
 description: >
-  Build the mpifoe-fw-2 Zephyr firmware (IFoE management CPU firmware) and
-  analyze its memory usage. Use when asked to build mpifoe-fw-2, compile the
+  Build the mpifoe-fw Zephyr firmware (IFoE management CPU firmware) and
+  analyze its memory usage. Use when asked to build mpifoe-fw, compile the
   management CPU firmware, produce zephyr.elf, or check firmware memory/size.
-  (Note: mpifoe-fw-2 is a separate repo from mpifoe-fw.)
 ---
 
-# Build mpifoe-fw-2 Firmware
+# Build mpifoe-fw Firmware
 
-**Repository**: `mpifoe-fw-2` (Zephyr-based IFoE management CPU firmware)
+**Repository**: `mpifoe-fw` (Zephyr-based IFoE management CPU firmware)
 **Build tool**: `scripts/build.py` (Python script wrapping CMake/west/Ninja)
 
-> Note: **mpifoe-fw-2** (this repo) is distinct from **mpifoe-fw**.
+Run all commands from the repository root.
 
 ## Build command
 
@@ -34,7 +33,7 @@ Environment:
 
 ## Build output
 
-Build directory: `build/fw.mi450-a0.silicon_eftest/` (created in the mpifoe-fw-2 repo root)
+Build directory: `build/fw.mi450-a0.silicon_eftest/` (created in the repo root)
 
 Key output files:
 - `build/fw.mi450-a0.silicon_eftest/zephyr/zephyr.elf` — firmware ELF binary

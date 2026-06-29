@@ -4,8 +4,7 @@ description: >
   Repository reference and coding concerns for the mpifoe-fw firmware repo
   (IFoE management CPU firmware). Covers config-value justification rules,
   interrupt handling, reset-hook ordering, and EFTEST guards. Use when
-  writing, reviewing, or debugging code in mpifoe-fw. (Note: this is the
-  mpifoe-fw repo, distinct from the separate mpifoe-fw-2 repo.)
+  writing, reviewing, or debugging code in mpifoe-fw.
 ---
 
 # mpifoe-fw — Repository Reference and Coding Concerns
@@ -14,9 +13,6 @@ This is reference knowledge applied when working on the mpifoe-fw firmware
 (the IFoE management CPU firmware). When reviewing changes here, verify they
 follow the concerns below in addition to the general practices in
 `coding-instructions.md`.
-
-> Note: **mpifoe-fw** (this repo) is distinct from **mpifoe-fw-2** (a separate
-> Zephyr-based firmware repo with its own build skill).
 
 ## Configuration value justification (IFOESW-205)
 
