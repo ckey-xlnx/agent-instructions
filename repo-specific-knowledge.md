@@ -493,17 +493,6 @@ bootenv -u emu_epgm -C /proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_15647
 - What to watch for: [e.g., "New code should use allocators, not malloc"]
 - Related tickets: [e.g., "IFOESW-546, IFOESW-547"]
 
-**IFOESW-205: Configuration Value Justification**
-- Goal: Remove redundancy from verification-derived configuration values and add proper justification
-- Status: Ongoing - applies to configuration initialization code
-- What to watch for: Changes to configuration values (especially in `#if 1` blocks with IFOESW-205 comments) must include:
-  1. Removal of any redundant values that can be derived from other sources
-  2. Justification with citations from architecture spec (e.g., mission mode configuration section)
-  3. Detailed explanation of behavioral changes from verification baseline
-  4. Validation that changes are correct
-- Related tickets: IFOESW-205
-- Key requirement: Any modification to configuration values marked with IFOESW-205 comments requires detailed explanation and cannot be approved without proper justification
-
 **[Effort Name 2]**: [e.g., "Error Handling Standardization"]
 - Goal: [e.g., "Consistent error return codes across modules"]
 - Status: [e.g., "Planning phase"]
@@ -595,15 +584,6 @@ bootenv -u emu_epgm -C /proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_15647
 
 ### Integration Gotchas
 
-**Shared Interrupt Registers**: 
-- Issue: Multiple interrupt sources sharing the same status register
-- How to handle: Consider architectural implications before routing through unrelated subsystems
-- What to review: 
-  - Question whether routing makes sense (e.g., packet notifications through RAS driver)
-  - Consider alternatives: main driver redispatch, separate IRQ dispatch layer
-  - Evaluate dependency implications
-  - Ensure status bits are cleared after handling to prevent repeated interrupts
-
 **[Gotcha 1]**: [e.g., "Firmware Version Compatibility"]
 - Issue: [e.g., "API changes between firmware versions"]
 - How to handle: [e.g., "Check version, use compatibility layer"]
@@ -625,76 +605,6 @@ bootenv -u emu_epgm -C /proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_15647
 
 When performing automated code reviews, systematically check for these items:
 
-### 0. Reset Hook Ordering and Dependencies
-**Rule**: Reset hooks must respect dependency ordering, especially during FINI phase.
-
-**Key principles**:
-- Reset hooks run in **reverse order** during RESET_PHASE_FINI (higher priority runs first during fini)
-- Components with dependencies should have appropriate priority spacing
-- Always comment on ordering constraints in the code
-- Use 2xx range for reset hook priorities to leave space for future additions
-
-**Dependency examples**:
-- **Event queues (EVQ)** should be destroyed AFTER traffic queues (TXQ/RXQ)
-  - TXQ/RXQ depend on EVQ to function
-  - During teardown: destroy TXQ/RXQ first, then EVQ
-  - Priority: EVQ at 200, TXQ/RXQ at 201 (higher number = runs first during FINI)
-- **Doorbell queue** should be destroyed AFTER RX/TX queues
-  - RX/TX queues depend on doorbell queue
-  - During teardown: destroy RX/TX first, then doorbell queue
-  - Priority: Doorbell at lower number than RX/TX
-
-**Reset hook client type handling**:
-- Each reset hook should only free resources for the specific client_id
-- Do NOT use fallthrough to free resources for other client types
-- The reset framework will call hooks for each affected client separately
-- Example: PF FLR will trigger hooks for VF first, then PF - don't manually handle both
-
-**How to check**:
-- Verify reset hook priorities respect dependencies
-- Check that priorities use 2xx range for spacing
-- Look for comments explaining ordering constraints
-- Ensure no fallthrough logic that frees resources for multiple client types
-- Validate each hook only handles its own client_id's resources
-
-**Example**:
-```c
-✅ CORRECT:
-/* Priority 200: EVQ must be destroyed after TXQ/RXQ (which are at 201) */
-DECLARE_RESET_HOOK(evq_reset, 200, ...)
-
-/* Priority 201: TXQ/RXQ destroyed before EVQ */
-DECLARE_RESET_HOOK(traffic_reset, 201, ...)
-
-// In hook body - only handle this client's resources:
-case MC_CLIENT_TYPE_PF:
-  fini_evq_index(EVQ_PF);  // Only PF's EVQ
-  break;
-case MC_CLIENT_TYPE_VF:
-  fini_evq_index(EVQ_VF);  // Only VF's EVQ
-  break;
-
-❌ INCORRECT:
-DECLARE_RESET_HOOK(evq_reset, 100, ...)  // Priority too low, no spacing
-DECLARE_RESET_HOOK(traffic_reset, 100, ...)  // Same priority as EVQ!
-
-// Don't do this - framework handles VF separately:
-case MC_CLIENT_TYPE_PF:
-  fini_evq_index(EVQ_PF);
-  __attribute__((fallthrough));  // Wrong! Don't free VF resources here
-case MC_CLIENT_TYPE_VF:
-  fini_evq_index(EVQ_VF);
-  break;
-```
-
-**Rationale**: 
-- Proper ordering prevents use-after-free and ensures clean teardown
-- Framework handles multi-client resets automatically
-- Comments document ordering constraints for future maintainers
-- Priority spacing allows future hooks to be inserted
-
-### 1. TODO/FIXME/HACK Markers
-
 ### 1. TODO/FIXME/HACK Markers
 **Rule**: ALL TODO, FIXME, HACK, XXX markers MUST include a Jira ticket reference.
 
@@ -715,31 +625,6 @@ case MC_CLIENT_TYPE_VF:
 ```
 
 **Rationale**: TODOs without tickets never get done. All technical debt must be tracked.
-
-### 2. EFTEST Guards
-**Rule**: EFTEST-only functionality MUST be guarded with `#if defined(CONFIG_EFTEST)`.
-
-**How to check**:
-- Identify EFTEST-only features (test commands, debug functions, capture modes)
-- Verify both declarations and definitions are guarded
-- Check that functions using EFTEST-only fields are also guarded
-- Even in `*_eftest.c` files, individual functions may need guards
-
-**Examples**:
-```c
-✅ CORRECT:
-#if defined(CONFIG_EFTEST)
-ifoe_ss_t *ifoe_ss_get_capturing_instance(uint32_t index) {
-  ...
-}
-#endif
-
-❌ INCORRECT:
-// In production code without guard:
-ifoe_ss_t *ifoe_ss_get_capturing_instance(uint32_t index) {
-  ...
-}
-```
 
 ### 3. Duplicate Declarations
 **Rule**: Function prototypes must not be duplicated in the same header file.
@@ -847,82 +732,6 @@ Commit 4: Temporary workaround for ACTIVE_OR_CAPTURING (temporary, clearly marke
 ❌ POOR STRUCTURE:
 Commit 1: Add everything mixed together
 ```
-
-### 9. Interrupt Handler Status Bit Clearing
-**Rule**: Interrupt handlers must clear status bits after handling to prevent repeated interrupts.
-
-**How to check**:
-- When reviewing interrupt handler code, verify status bits are cleared
-- Check that clearing happens AFTER the interrupt is fully handled
-- Ensure the correct status register and bit are being cleared
-- Verify clearing is done even when delegating to callbacks
-
-**Example**:
-```c
-✅ CORRECT:
-void ex_packet_read_pending(ex_t *ex)
-{
-  if (ex->packet_read_pending_callback != NULL)
-    ex->packet_read_pending_callback();
-  
-  /* Clear the status bit to prevent repeated interrupts */
-  uint32_t status = BIT(VUL_EX_MR_PIO_CSR_S2R_STA_S2R_PKT_RD_PEND__LBN);
-  sys_write32(status, ex->base + VUL_EX_CSR_PIO_S2R_STA__ADDR);
-}
-
-❌ INCORRECT:
-void ex_packet_read_pending(ex_t *ex)
-{
-  if (ex->packet_read_pending_callback != NULL)
-    ex->packet_read_pending_callback();
-  /* Missing status bit clear - will cause repeated interrupts! */
-}
-```
-
-**Rationale**: Failing to clear interrupt status bits causes the interrupt to fire repeatedly, wasting CPU and potentially causing system instability.
-
-### 10. Architectural Dependencies in Interrupt Routing
-**Rule**: Question architectural implications when routing interrupts through unrelated subsystems.
-
-**How to check**:
-- When an interrupt handler routes to another subsystem, evaluate if the dependency makes sense
-- Consider whether the routing creates inappropriate coupling
-- Look for alternatives that maintain better separation of concerns
-- Flag for discussion when dependencies feel wrong
-
-**Red flags**:
-- Routing packet/data interrupts through error handling subsystems
-- Creating dependencies between unrelated functional areas
-- Mixing concerns (e.g., RAS driver handling non-error notifications)
-
-**Alternative approaches to consider**:
-- Main driver redispatches to appropriate handlers
-- Separate IRQ dispatch layer that routes to multiple handlers
-- Shared interrupt infrastructure that doesn't couple subsystems
-
-**Example from r/29158**:
-```c
-❌ QUESTIONABLE:
-/* In RAS driver - handling packet notifications */
-if (s2r_status & BIT(PACKET_READ_PENDING))
-  ex_packet_read_pending(ex);  // Routing packet event through error handler
-
-✅ BETTER ALTERNATIVES:
-a) Main EX driver handles interrupt, dispatches to RAS and packet handlers
-b) Generic interrupt dispatcher routes to both RAS and packet subsystems
-```
-
-**Rationale**: 
-- Architectural dependencies should align with functional relationships
-- Error handling subsystems shouldn't handle non-error events
-- Better separation of concerns improves maintainability
-- Consider long-term implications of dependency choices
-
-**When to flag**:
-- Dependencies that feel conceptually wrong
-- Mixing unrelated concerns in a single handler
-- Routing that creates circular or inappropriate dependencies
-- Solutions that work but violate design intent
 
 ## Notes
 
