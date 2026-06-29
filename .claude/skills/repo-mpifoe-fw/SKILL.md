@@ -94,6 +94,11 @@ Flag for discussion when a dependency feels conceptually wrong, mixes
 unrelated concerns, or works but violates design intent. Also ensure status
 bits are cleared after handling (see above).
 
+Rationale: architectural dependencies should align with functional
+relationships; error-handling subsystems shouldn't handle non-error events;
+better separation of concerns improves maintainability; consider the long-term
+implications of dependency choices.
+
 ## Reset hook ordering and dependencies
 
 Reset hooks must respect dependency ordering, especially during the FINI phase.
@@ -143,6 +148,11 @@ case MC_CLIENT_TYPE_VF:
   fini_evq_index(EVQ_VF);
   break;
 ```
+
+Rationale: proper ordering prevents use-after-free and ensures clean teardown;
+the framework handles multi-client resets automatically; comments document
+ordering constraints for future maintainers; priority spacing allows future
+hooks to be inserted.
 
 ## EFTEST guards
 
