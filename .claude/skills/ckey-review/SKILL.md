@@ -24,7 +24,7 @@ This document describes the process for partially automating feedback on review 
 1. **Summary of pending reviews** - Quick overview of reviews meeting specific criteria
 2. **Detailed analysis** - In-depth review with suggested comments and controversy flags
 3. **Interactive feedback submission** - Guided process for leaving review comments
-4. **Learning from feedback** - Suggestions for updating repo-specific-knowledge.md based on actual feedback patterns
+4. **Learning from feedback** - Suggestions for updating the coding/repo guidance (coding-instructions.md or the relevant `repo-<name>` reference skill) based on actual feedback patterns
 
 ## Process Flow
 
@@ -61,9 +61,9 @@ Status: [pending/submitted]
 **Purpose**: Provide actionable feedback suggestions and identify reviews requiring human attention.
 
 **Analysis sources** (in priority order):
-1. `coding-instructions.md` - General coding and commit practices
+1. `coding-instructions.md` - General coding and commit practices (the source of truth for the rules)
 2. This skill (`ckey-review`) - describes the review process
-3. `repo-specific-knowledge.md` - Repository-specific style, architecture, and priorities
+3. The relevant `repo-<name>` reference skill (e.g. `repo-mpifoe-fw`) and the repo's `.coding-style.md` - repository-specific style, concerns, and priorities
 
 **Analysis steps**:
 
@@ -95,14 +95,29 @@ Status: [pending/submitted]
    - Identify unresolved issues or open questions
    - Note areas where clarification or additional feedback may be helpful
 
-4. **Code change analysis**:
-   - Check for TODO/FIXME/HACK/XXX without Jira references
-   - Verify whitespace rules (no trailing whitespace, empty blank lines)
-   - Assess commit size and logical separation
-   - Check for unexplained design deviations
-   - Verify repository-specific style from repo-specific-knowledge.md
-   - Look for common bug patterns (memory leaks, pointer issues, missing checks)
-   - Assess code clarity and maintainability
+4. **Code change analysis** — verify the change adheres to the documented
+   practices. This skill does not restate the rules; check against their
+   source of truth and cite it in any comment you raise.
+
+   Adherence checklist (rule → where it is defined):
+   - TODO/FIXME/HACK/XXX carry a Jira reference — `coding-instructions.md`
+     §TODO/FIXME Requirements
+   - Workarounds have a separate cleanup ticket and document why they work /
+     their assumptions — `coding-instructions.md` §Workarounds
+   - Permanent infrastructure is separated from temporary workarounds, in
+     distinct commits — `coding-instructions.md` §Separating Permanent from
+     Temporary and §Incremental Changes
+   - Commit messages follow the format and explain the "why" —
+     `coding-instructions.md` §Commit Message Structure, §Commit Philosophy
+   - No trailing whitespace; blank lines fully empty —
+     `coding-instructions.md` §Whitespace Rules
+   - Per-repo coding concerns — the relevant `repo-<name>` reference skill
+     (e.g. `repo-mpifoe-fw`) and the repo's `.coding-style.md`
+
+   Beyond the checklist, also use judgement on:
+   - Common bug patterns (memory leaks, pointer issues, missing checks)
+   - Unexplained design deviations
+   - Overall code clarity and maintainability
 
 5. **Controversy detection**:
    Flag reviews that need human attention when:
@@ -110,7 +125,7 @@ Status: [pending/submitted]
    - Deviations from established patterns without justification
    - Complex refactoring affecting multiple subsystems
    - Changes to critical paths (memory management, hardware interfaces)
-   - Conflicts with repository-specific priorities in repo-specific-knowledge.md
+   - Conflicts with repository-specific priorities in the relevant `repo-<name>` reference skill
    - Existing review comments indicate disagreement
    - Changes that appear to violate design intent
 
@@ -301,7 +316,12 @@ AI-review-reviewed-by: Claude
 
 ### D. Learning from Feedback
 
-**Purpose**: Improve repo-specific-knowledge.md based on actual feedback patterns.
+**Purpose**: Improve the coding/repo guidance based on actual feedback
+patterns. Suggestions target the correct home for each rule:
+- Generic coding/commit practices → `coding-instructions.md`
+- Repository-specific style, concerns, or priorities → the relevant
+  `repo-<name>` reference skill (e.g. `repo-mpifoe-fw`), or the repo's
+  `.coding-style.md`
 
 **Data sources**:
 1. Feedback submitted through the tool (step C)
@@ -317,40 +337,35 @@ AI-review-reviewed-by: Claude
 
 2. **Gap identification**:
    - Find issues caught in reviews but not in automated analysis
-   - Identify missing rules in repo-specific-knowledge.md
+   - Identify missing rules in `coding-instructions.md` or the relevant
+     `repo-<name>` reference skill
    - Detect outdated guidance that no longer applies
 
-3. **Suggestion generation**:
+3. **Suggestion generation** — route each suggestion to its correct home:
    ```
-   === Suggested Updates to repo-specific-knowledge.md ===
-   
+   === Suggested Guidance Updates ===
+
    Based on 15 reviews over the past 2 weeks:
-   
-   NEW RULE SUGGESTION:
-   Section: Memory Management
+
+   NEW RULE SUGGESTION (generic → coding-instructions.md):
    Observation: 8 comments about missing free() calls in error paths
-   Suggested addition:
-   "Always verify error paths properly free allocated resources. 
-   Common pattern: if allocation fails partway through initialization,
-   ensure cleanup unwinds all prior allocations."
-   
-   PATTERN REFINEMENT:
-   Section: Naming Conventions
-   Observation: 5 comments about inconsistent prefix usage
-   Current rule: "Use module prefix for public functions"
-   Suggested refinement: "Use module prefix for public functions. 
-   For the SDP module, use 'sdp_' prefix. For RX2 stage, use 'rx2_'."
-   
+   Suggested addition (§Workarounds or a new error-path rule):
+   "Always verify error paths free allocated resources; if allocation
+   fails partway through init, unwind all prior allocations."
+
+   NEW RULE SUGGESTION (repo-specific → repo-mpifoe-fw skill):
+   Observation: 5 comments about inconsistent module prefixes
+   Suggested addition: "For the SDP module use 'sdp_'; for RX2 use 'rx2_'."
+
    OUTDATED RULE:
-   Section: Hardware Interfaces
-   Observation: No comments about this in 20 reviews
-   Suggested action: Review if this guidance is still relevant
+   Observation: a documented rule drew no comments in 20 reviews
+   Suggested action: review whether it is still relevant
    ```
 
 4. **Update workflow**:
    - Present suggestions for review
    - Allow acceptance/rejection/editing of each suggestion
-   - Generate updated repo-specific-knowledge.md content
+   - Apply accepted changes to the correct file/skill
    - Optionally create a commit with the changes
 
 **Learning frequency**:
@@ -360,37 +375,13 @@ AI-review-reviewed-by: Claude
 
 ## Configuration
 
-### Repository-Specific Knowledge Structure
+### Where guidance lives
 
-Each repository should have a repo-specific-knowledge.md file containing:
-
-1. **Repository identification**
-   - Name and purpose
-   - Primary languages
-   - Key subsystems
-
-2. **Coding style specifics**
-   - Naming conventions
-   - Memory management patterns
-   - Error handling approaches
-   - Module organization
-
-3. **Architecture principles**
-   - Design patterns in use
-   - Layering and separation of concerns
-   - Interface contracts
-   - Performance considerations
-
-4. **Current priorities**
-   - Active refactoring efforts
-   - Known technical debt
-   - Areas under active development
-   - Deprecated patterns to avoid
-
-5. **Common issues**
-   - Frequent mistakes
-   - Anti-patterns to watch for
-   - Integration gotchas
+The rules this review process checks against are maintained in:
+- `coding-instructions.md` — generic coding and commit practices (source of truth)
+- `repo-<name>` reference skills (e.g. `repo-mpifoe-fw`, `repo-simnow`,
+  `repo-ifoe-arch-model`) — repository purpose, dependencies, and coding concerns
+- each repository's `.coding-style.md` — fine-grained per-repo style
 
 ### Tool Integration
 
@@ -426,8 +417,8 @@ When analyzing a review request, always check for existing reviews and their com
 ## Best Practices
 
 ### For Automated Analysis
-- Always read all three instruction files before analysis
-- Consider repository context from repo-specific-knowledge.md
+- Read the analysis sources before analysis (coding-instructions.md, this skill, the relevant `repo-<name>` reference skill)
+- Consider repository context from the relevant `repo-<name>` reference skill
 - Flag uncertainty - better to ask than assume
 - Provide specific line numbers and file paths
 - Quote actual code in suggestions
@@ -445,7 +436,7 @@ When analyzing a review request, always check for existing reviews and their com
 - Look for patterns across multiple reviews
 - Don't over-fit to individual cases
 - Suggest rules that are actionable and verifiable
-- Keep repo-specific-knowledge.md focused and practical
+- Keep the guidance (coding-instructions.md and the `repo-<name>` skills) focused and practical
 
 ## Privacy and Security
 
