@@ -77,6 +77,11 @@ This ensures transparency about the origin of code and helps track the effective
 - Note when code placement is temporary or conceptually wrong but pragmatic
 - Explain future plans for moving/refactoring code
 
+### Separating Permanent from Temporary
+- Distinguish permanent infrastructure (new valid long-term state, iterator macros, APIs needed after a workaround is gone) from temporary code (workarounds for sim/hardware bugs, mixed-state concepts that violate design intent, code to be removed when a ticket resolves).
+- Put permanent infrastructure in its own commit(s), separate from temporary workarounds; keep preparatory commits separate from feature commits.
+- Don't mark genuinely-permanent state as "temporary", and do clearly mark genuine workarounds with the ticket that will remove them.
+
 ### Example Pattern
 ```
 IFOESW-546: provide allocators for the SDP streaming types
@@ -130,6 +135,15 @@ It's acceptable to leave work incomplete and tag it for future completion, but e
 ```
 
 This ensures all technical debt is tracked and can be prioritized appropriately.
+
+### Workarounds
+- A workaround tied only to a *feature* ticket needs a **separate cleanup ticket** for its removal (the feature ticket closes when the feature ships). Reference both in the comment.
+- Document **why** a workaround works and the assumptions it relies on. Flag fragile ones that depend on accidental equalities. Example:
+  ```c
+  /* Forces all queues to PB when rx_capture is enabled.
+   * NOTE: only works because MR_PIO_PCP == IFOE_RSP_QID (both 2);
+   * if either changes, this breaks. */
+  ```
 
 ### General Principles
 - Separate concerns (e.g., transport vs. logic)
