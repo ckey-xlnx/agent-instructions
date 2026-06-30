@@ -37,7 +37,7 @@ without them.
 | Use any `git` command                        | `agent-tooling-instructions.md` § Git Commands                                         |
 | Create or comment on a Jira issue            | `reporting-instructions.md` § AI Attribution Requirements                              |
 | Write, amend, or commit code                 | `coding-instructions.md` §§ Commit Message Structure, Whitespace Rules                 |
-| Perform a code review                        | the `ckey-review` skill (`.claude/skills/ckey-review/`) — load it before reviewing     |
+| Perform a code review                        | the `ckey-review` skill (`skills/ckey-review/`) — load it before reviewing             |
 | Edit any file in `agent-instructions/`       | This file (`agent-instructions/AGENTS.md`) — read it in full before making changes   |
 
 ## Before You Act — Mandatory Action Gates
@@ -128,9 +128,9 @@ When starting a task, if it's unclear which folder the work should be done in, c
 - Test issue guidelines
 - Maintains consistency with code commit attribution
 
-**.claude/skills/**
+**skills/**
 - Claude Code skills: task-specific and reference content that loads on demand (progressive reveal) when a request matches the skill's description, rather than always consuming context
-- Discovered globally via the `~/.claude/skills` symlink (set up by the dotfiles `link-dotfiles.sh`)
+- Live in `skills/` in this repo; discovered globally via the `~/.claude/skills` symlink → `agent-instructions/skills` (set up by the dotfiles `link-dotfiles.sh`)
 - Skill names follow a `<domain>-<kind>-<subject>` taxonomy (domains: `dev`, `admin`, `env`, `meta`; kinds: `workflow`, `knowledge`), with blessed shorthands `build-` (=dev-workflow-build), `repo-` (=dev-knowledge-repo), `infra-` (=admin-knowledge-infra), and `ckey-review` kept verbatim. The canonical definition lives in the `meta-writing-skills` skill.
 - The skills hold knowledge that previously lived in standalone files, by category:
   - **dev-knowledge** — per-repo reference: `repo-mpifoe-fw`, `repo-simnow`, `repo-ifoe-arch-model` (plus each repo's `.coding-style.md` for fine-grained style)
@@ -151,4 +151,4 @@ When starting a task, if it's unclear which folder the work should be done in, c
 - For infrastructure information (Jira instances, service mappings, etc.), reference **infrastructure-knowledge.md**
 - For MCP server names, auth, and tool call syntax per agent, reference **mcp-configuration.md**
 - When creating Jira issues or other external reports, reference **reporting-instructions.md**
-- For operational/admin tasks, building, or end-to-end workflows, the relevant skill loads on demand (see **.claude/skills/** above)
+- For operational/admin tasks, building, or end-to-end workflows, the relevant skill loads on demand (see **skills/** above)

@@ -18,10 +18,10 @@ description matches the request.
 A skill MUST live at exactly:
 
 ```
-.claude/skills/<name>/SKILL.md
+skills/<name>/SKILL.md
 ```
 
-**Subdirectories are NOT discovered.** `.claude/skills/group/<name>/SKILL.md`
+**Subdirectories are NOT discovered.** `skills/group/<name>/SKILL.md`
 is silently ignored (Claude Code issue #10238, open as of mid-2026). This was
 confirmed empirically here: nested skills never appeared in the model's
 available-skills list; flattening fixed it immediately.
@@ -96,12 +96,12 @@ The `<kind>` segment reflects which of these a skill is:
 
 ## Discovery mechanics
 
-- Skills here are version-controlled in `agent-instructions/.claude/skills/`
-  and discovered globally via the `~/.claude/skills` symlink (set up by the
-  dotfiles `link-dotfiles.sh`).
+- Skills here are version-controlled in `agent-instructions/skills/`
+  and discovered globally via the `~/.claude/skills` symlink → that directory
+  (set up by the dotfiles `link-dotfiles.sh`).
 - A **new top-level skill dir** is only scanned at startup — it needs a
-  session restart before it is discovered. A new skill added under an
-  already-scanned `.claude/skills/` is picked up without restart in practice,
+  session restart before it is discovered. A new skill added under the
+  already-scanned skills directory is picked up without restart in practice,
   but restart-then-verify is the safe path.
 - Trigger reliability is imperfect (~50% on vague descriptions). For any
   **mandatory** behaviour (a hard gate), keep the gate in AGENTS.md and point
@@ -109,7 +109,7 @@ The `<kind>` segment reflects which of these a skill is:
 
 ## Migration pattern (moving content out of an always-loaded file)
 
-1. Create the skill (`.claude/skills/<name>/SKILL.md`) with the content.
+1. Create the skill (`skills/<name>/SKILL.md`) with the content.
 2. Remove that content from the source file; leave a slim orienting stub/index
    pointing at the skill.
 3. Update AGENTS.md references (file index, usage section, and any mandatory
