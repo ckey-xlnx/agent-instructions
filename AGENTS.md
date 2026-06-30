@@ -14,6 +14,17 @@ This repository contains instruction files for AI-assisted code review and devel
 
 Violations of this directive — even well-intentioned ones — are more harmful than admitting uncertainty. A wrong answer delivered confidently wastes time, causes bugs, and erodes trust. An honest "I don't know" is always the correct response when knowledge is absent.
 
+## AI Attribution — Always Required
+
+Disclosing AI involvement is a corollary of the Prime Directive. **Any durable artifact you create or modify with AI assistance MUST carry an attribution footer naming the AI tool.** This is not optional and applies regardless of how small the contribution feels (trivial, purely-mechanical changes are the only exception, as noted per-artifact).
+
+The exact footer vocabulary differs per artifact; consult the relevant source when you create one:
+- **Commits** (`AI-authored-by:` / `AI-amended-by:`) — `coding-instructions.md` § AI Attribution
+- **Code reviews** (`AI-review-delivered-by:` / `-aided-by:` / `-reviewed-by:`) — the `ckey-review` skill § Review Attribution
+- **Jira issues / comments** — `reporting-instructions.md` § AI Attribution Requirements
+
+When in doubt, attribute (and prefer the higher level of attribution). Omit only when AI was genuinely not involved.
+
 ## Before You Act — Mandatory Reading Gates
 
 These are **hard gates**. You MUST read the specified material before performing the described
