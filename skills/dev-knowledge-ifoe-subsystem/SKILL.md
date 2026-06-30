@@ -2,19 +2,17 @@
 name: dev-knowledge-ifoe-subsystem
 description: >
   Reference for the IFoE subsystem (a.k.a. "station") — core IFoE plus the XRSEC,
-  XRPFC, and XRMAC blocks beneath it — and how it connects to the SDP switch, data
-  fabric, and the wider MI450 GPU. Use when reading, writing, reviewing, or
-  debugging code, RTL, or models involving the IFoE subsystem, an IFoE station,
-  XRSEC / XRPFC / XRMAC, IFoE ports, IFoE port routing/redundancy, DXS/DXM, the
-  SDP switch, or how IFoE fits into a MID / MI450. Covers the block stack below
-  core IFoE, the 4/2/1 port modes, accelerator-id+path port routing for redundancy,
-  the SDP-side connectivity (IFoE Completer <- DXS Originator, IFoE Originator ->
-  DXM Completer, via SDP SW into DF to GPU/DMA/HBM), and the station-count
-  hierarchy (up to 18 stations per MID, 2 MIDs per MI450). For the core IFoE block
-  itself (streams, sequencing, replay) see dev-knowledge-ifoe-core; for SDP see
-  dev-knowledge-sdp-interface. Trigger phrases: "IFoE subsystem", "IFoE station",
-  "station", "XRSEC", "XRPFC", "XRMAC", "IFoE ports", "IFoE port routing", "DXS",
-  "DXM", "SDP switch", "MID", "Media IO Die", "MI450 IFoE".
+  XRPFC, and XRMAC blocks beneath it that provide the ethernet ports. Use when
+  reading, writing, reviewing, or debugging code, RTL, or models involving the
+  IFoE subsystem, an IFoE station, XRSEC / XRPFC / XRMAC, or IFoE port modes.
+  Covers the block stack below core IFoE and the 4/2/1 port modes (how many
+  ethernet ports the station presents). Note: the subsystem *provides* ports but
+  does not route streams to them — (accelerator id, path) -> port routing lives in
+  core IFoE (path is an IFoE-only concept); see dev-knowledge-ifoe-core. For the
+  GPU topology, station counts (MID/MI450) and the internal SDP path (DXS/DXM, SDP
+  switch, DF) see dev-knowledge-mi450-gpu; for SDP see dev-knowledge-sdp-interface.
+  Trigger phrases: "IFoE subsystem", "IFoE station", "station", "XRSEC", "XRPFC",
+  "XRMAC", "IFoE ports", "IFoE port modes", "2x400G".
 ---
 
 # IFoE Subsystem (Station)
@@ -28,42 +26,23 @@ The **IFoE subsystem** — also called a **station** — is the combination of:
 
 ## Ports
 
-XRSEC / XRPFC / XRMAC together provide multiple **ports** to the ethernet fabric.
-The number of ports depends on the operating mode: **4, 2, or 1**.
+XRSEC / XRPFC / XRMAC together provide the **ports** to the ethernet fabric. The
+number of ports the station presents depends on the operating mode: **4, 2, or 1**.
+(For example, Helios runs IFoE in 2×400G mode = 2 ports — see
+`dev-knowledge-helios`.)
 
-### Stream-to-port routing and redundancy
+The subsystem **provides** the ports; it does **not** decide which stream uses
+which port. Stream-to-port routing is keyed on `(accelerator id, path)` and lives
+in **core IFoE**, because *path* is an IFoE-only concept and the IFoE→XRSEC
+interface already speaks in terms of ports. See `dev-knowledge-ifoe-core` for the
+routing table and its port-loss redundancy.
 
-Streams are routed to ports via a **table indexed by `(accelerator id, path)`**
-— the same stream-identity fields established by core IFoE. Because the mapping is
-table-driven, streams can be re-routed across ports, giving **redundancy against
-port loss**: if a port goes down, its streams can be moved to surviving ports.
+## Where the station sits
 
-## SDP-side connectivity
-
-Core IFoE's two top-edge SDP interfaces connect into the SDP fabric:
-
-- The IFoE **Completer** interface connects to the **DXS Originator** interface.
-- The IFoE **Originator** (initiator) interface connects to the **DXM Completer**
-  interface.
-
-DXS and DXM are reached via the **SDP switch (SDP SW)**. The SDP switch in turn
-connects into the **DF (Data Fabric)**, which routes to **GPU, DMA engines, HBM**,
-etc.
-
-Direction summary:
-
-```
-DXS.Originator ---> IFoE.Completer        (into IFoE, request side)
-IFoE.Originator ---> DXM.Completer         (out of IFoE, toward fabric)
-        (DXS / DXM reached via SDP SW -> DF -> GPU / DMA / HBM)
-```
-
-## Hierarchy: station -> MID -> MI450
-
-- A **Media IO Die (MID)** can have up to **18 stations**.
-- An **MI450 GPU** has **2 MIDs**.
-
-So a single MI450 can host up to 36 IFoE stations (2 MIDs × 18).
+A station attaches to the GPU's SDP fabric via core IFoE's two top-edge SDP
+interfaces (through DXS/DXM). Station counts per MID, per-GPU topology, and the
+internal SDP path (SDP switch -> DF -> GPU/DMA/HBM) are covered in
+`dev-knowledge-mi450-gpu`.
 
 ## Naming note
 

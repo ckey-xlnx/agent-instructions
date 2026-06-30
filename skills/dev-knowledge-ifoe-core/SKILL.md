@@ -8,13 +8,17 @@ description: >
   Covers the core block's two top-edge SDP interfaces (Originator + Completer) and
   bottom-edge ethernet pairing, how SDP traffic is managed as streams, stream
   identity (destination accelerator id, path, host/guest, request/response), the
-  TCP-like per-stream sequencing / acknowledgement / replay-buffer behaviour, and
-  which SDP message types each stream carries (request = Req + OrigData,
-  response = RdRsp + WrRsp). For the IFoE subsystem / station (XRSEC, XRPFC,
-  XRMAC, ports, DXS/DXM, MID/MI450) see dev-knowledge-ifoe-subsystem; for SDP
-  itself see dev-knowledge-sdp-interface. Trigger phrases: "IFoE", "core IFoE",
-  "UALoE", "IFoE stream", "IFoE request/response stream", "IFoE replay buffer",
-  "IFoE sequence number / ACK".
+  TCP-like per-stream sequencing / acknowledgement / replay-buffer behaviour, which
+  SDP message types each stream carries (request = Req + OrigData, response = RdRsp
+  + WrRsp), the (accelerator id, path) -> port routing table (path is an
+  IFoE-only concept) with port-loss redundancy, and IFoE's SDP virtual-channel
+  handling (ignored on ingress, synthesised on egress). For the IFoE subsystem /
+  station (XRSEC, XRPFC, XRMAC, port modes) see dev-knowledge-ifoe-subsystem; for
+  the GPU topology, internal SDP path (DXS/DXM, SDP switch, DF) and address policy
+  see dev-knowledge-mi450-gpu; for SDP itself see dev-knowledge-sdp-interface.
+  Trigger phrases: "IFoE", "core IFoE", "UALoE", "IFoE stream",
+  "IFoE request/response stream", "IFoE replay buffer", "IFoE sequence number /
+  ACK", "IFoE path", "IFoE port routing", "IFoE VC handling".
 ---
 
 # Core IFoE
@@ -48,8 +52,9 @@ combination of:
 | Request vs response      | 1 bit   | whether the stream carries requests or responses |
 
 The path being an address hash spreads traffic for a given destination across up
-to eight paths; `(accelerator id, path)` is also the key used downstream for
-port routing (see `dev-knowledge-ifoe-subsystem`).
+to eight paths. `(accelerator id, path)` is also the key used for **port routing**
+(see below). **Path is an IFoE-only concept** — nothing below IFoE knows about
+paths; the IFoE→XRSEC interface already speaks in terms of ports.
 
 ## TCP-like per-stream transport
 
@@ -76,3 +81,37 @@ stream of the opposite direction**. Concretely:
 
 So a response stream does double duty: it carries `RdRsp`/`WrRsp` *and* the
 TCP-style ACKs for the two opposite-direction streams.
+
+## Port routing (path -> port)
+
+Streams are routed to ports via a **table indexed by `(accelerator id, path)`** —
+the same stream-identity fields above. This routing lives in **core IFoE**, because
+path is an IFoE-only concept: the blocks below (XRSEC/XRPFC/XRMAC) only see ports.
+The IFoE subsystem *provides* the ports (4, 2, or 1 depending on mode — see
+`dev-knowledge-ifoe-subsystem`); core IFoE *decides which port* each stream uses.
+
+Because the mapping is table-driven, streams can be re-routed across ports, giving
+**redundancy against port loss**: if a port goes down, its streams can be moved to
+surviving ports.
+
+## SDP virtual-channel (VC) handling
+
+IFoE does **not** preserve the SDP VC end-to-end. Instead:
+
+- **On SDP ingress**, IFoE **ignores the VC** of incoming SDP traffic.
+- **On SDP egress**, IFoE **synthesises the VC** based on its knowledge of which
+  accelerators (by accelerator id) are **local** vs **remote**.
+
+The *policy* for which VC (and which address space) corresponds to local vs remote
+traffic is a GPU/topology concern — see `dev-knowledge-mi450-gpu`.
+
+## SDP-side attachment
+
+Core IFoE's two top-edge SDP interfaces attach to the GPU's SDP fabric through
+**DXS** and **DXM**:
+
+- IFoE **Completer** interface  <- **DXS** Originator interface
+- IFoE **Originator** (initiator) interface -> **DXM** Completer interface
+
+The full path beyond DXS/DXM (SDP switch -> DF -> GPU/DMA/HBM) is described in
+`dev-knowledge-mi450-gpu`.
