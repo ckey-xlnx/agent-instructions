@@ -69,6 +69,13 @@ A system is dynamically allocated via **etx**.
 Caveats:
 
 - Allocations **time out if there is no graphical login**.
-- An **ssh session to an unallocated system will time out** — so you cannot
-  rely on sshing straight to a host at these sites without an active etx
-  allocation backing it.
+- When an allocation lapses, you can **still ssh in and connect** — but the
+  session is **killed after some delay**. So a working ssh connection is not
+  proof of a live allocation; an established session that suddenly dies (or new
+  sessions that drop shortly after connecting) points at a lapsed allocation
+  that needs refreshing via a graphical login.
+- Separately, **ssh-agent keys expire**. Symptoms are auth failures on connect
+  — `Permission denied (publickey,...)`, sometimes preceded by `Too many
+  authentication failures`. This is distinct from a lapsed allocation: it
+  blocks the connection outright rather than killing an established session.
+  Re-add the keys to the agent to fix.
