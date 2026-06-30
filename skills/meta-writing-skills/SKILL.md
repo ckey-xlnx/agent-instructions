@@ -52,6 +52,7 @@ conventional subject segment; use the shorthand, not the long form:
 | `build-`  | `dev-workflow-build-`   | building a specific target |
 | `repo-`   | `dev-knowledge-repo-`   | per-repository reference |
 | `infra-`  | `admin-knowledge-infra-`| infrastructure reference (sites, grids) |
+| `bug-`    | `dev-knowledge-bug-`    | a single fixed/worked-around bug (regression recognition) |
 | `ckey-review` | (verbatim)          | the review skill — kept short as a command |
 
 Skills with no blessed shorthand use the full prefix, e.g.
@@ -93,6 +94,42 @@ The `<kind>` segment reflects which of these a skill is:
 - **knowledge** — conventions / domain reference applied inline, triggered by
   context ("working on repo Z"). Per-subject reference triggers reliably
   because the subject name/paths appear in the request.
+
+## The `bug-` kind (documenting a fixed/worked-around bug)
+
+A `bug-` skill (`dev-knowledge-bug-<subject>`) documents a **single** bug that
+has been fixed or has a workaround in place. Its primary purpose is **regression
+recognition** — so that if the same symptoms resurface later, the bug is
+recognised as previously-seen rather than re-investigated from scratch. It also
+serves as durable documentation for any workaround still in place.
+
+Scope each `bug-` skill to one bug (or one tightly-related cluster).
+
+**The subject segment MUST carry the bug's tracking reference** so the name
+uniquely and recognisably identifies the bug. The form is
+`bug-<project>-<number>-<slug>`, where `<project>` is the tracking project,
+`<number>` is the bug number within it, and `<slug>` is a short symptom/component
+hint — e.g. `bug-demi400-8833-no-paused-stream-ack` (DEMI400 project, bug 8833).
+Do not use a generic name like `bug-stream-issue`; the project+number is what
+makes one bug distinguishable from another in the skills list.
+
+Lead the description with the **observable symptoms** — the failure mode, error
+text, or misbehaviour a future request would describe — because that is what a
+regression report will contain, not the root cause (which is unknown when the
+regression recurs). A useful body covers:
+
+- **Symptoms** — how it manifests (error messages, wrong values, hangs), stated
+  in the terms an observer would use.
+- **Root cause** — what was actually wrong, once known.
+- **Fix / workaround** — what was done, where, and whether it's a true fix or a
+  workaround still load-bearing.
+- **How to confirm a recurrence** — the quickest check that distinguishes this
+  bug from a look-alike.
+- Links (`[[name]]`) to the relevant `repo-` / `dev-knowledge-` skills.
+
+This is `dev-knowledge` (reference applied inline, context-triggered), not a
+workflow. It complements — does not replace — the commit/PR that carries the
+fix: the commit explains the change; the skill makes the symptoms findable.
 
 ## Discovery mechanics
 

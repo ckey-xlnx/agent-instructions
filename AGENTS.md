@@ -131,7 +131,7 @@ When starting a task, if it's unclear which folder the work should be done in, c
 **skills/**
 - Claude Code skills: task-specific and reference content that loads on demand (progressive reveal) when a request matches the skill's description, rather than always consuming context
 - Live in `skills/` in this repo; discovered globally via the `~/.claude/skills` symlink → `agent-instructions/skills` (set up by the dotfiles `link-dotfiles.sh`)
-- Skill names follow a `<domain>-<kind>-<subject>` taxonomy (domains: `dev`, `admin`, `env`, `meta`; kinds: `workflow`, `knowledge`), with blessed shorthands `build-` (=dev-workflow-build), `repo-` (=dev-knowledge-repo), `infra-` (=admin-knowledge-infra), and `ckey-review` kept verbatim. The canonical definition lives in the `meta-writing-skills` skill.
+- Skill names follow a `<domain>-<kind>-<subject>` taxonomy (domains: `dev`, `admin`, `env`, `meta`; kinds: `workflow`, `knowledge`), with blessed shorthands `build-` (=dev-workflow-build), `repo-` (=dev-knowledge-repo), `infra-` (=admin-knowledge-infra), `bug-` (=dev-knowledge-bug, a single fixed/worked-around bug; named `bug-<project>-<number>-<slug>`), and `ckey-review` kept verbatim. The canonical definition lives in the `meta-writing-skills` skill.
 - The skills hold knowledge that previously lived in standalone files, by category:
   - **dev-knowledge** — per-repo reference: `repo-mpifoe-fw`, `repo-simnow`, `repo-ifoe-arch-model` (plus each repo's `.coding-style.md` for fine-grained style)
   - **dev-workflow** — builds (`build-mpifoe-fw`, `build-simnow`, `build-asp`, `build-diag-tng`, `build-ifoe-arch-model-ss-emu`) and simulation (`dev-workflow-simnow-launch`, `dev-workflow-simnow-datapath-test`)
