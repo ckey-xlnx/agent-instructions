@@ -55,3 +55,20 @@ velocetool-ifoe --debug setup \
 
 For the exact, current option set, read the tool itself (it is short) rather than
 trusting this list.
+
+For deriving the `--rtl` er-release path from a workspace name, see
+`dev-workflow-ss-emu-workspace` ("Deriving the er (RTL) path from a workspace").
+
+### Environment vs structural arguments
+
+When adapting the command line, distinguish two kinds of argument:
+
+- **Environment (site/hardware/allocation) — known-good for atl+Veloce+MI450, but
+  would change elsewhere, and override wrong-for-this-system tool defaults:**
+  `--allocID MI450_P1_VEL_AINIC_AP`, `--emu-list MUGELLO` (physical emulator),
+  `--constraint RHEL8` (Slurm node OS; MUGELLO needs it, the default is not RHEL8),
+  `--partition mi_veloce`. See `infra-grid-atl` for the grid side.
+- **Structural — identify the specific run** (`--test`, `--run-epgm-binary`,
+  `--libdpi`, `--rtl`). These are workspace/variant-specific; the caller must set
+  them correctly. For the self-contained variant's structural values see
+  `dev-knowledge-ss-emu-selfcontained-app`.

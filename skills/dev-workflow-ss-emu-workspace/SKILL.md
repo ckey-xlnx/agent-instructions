@@ -56,6 +56,26 @@ segment after the ss-number (e.g. ner `EPGM_ifoe_ss_156478_v3_…` ↔ er
 e.g. `LSE_Design`. These match the overlay-repo branch names exactly (see
 `dev-knowledge-repo-ifoe-emu-overlays`).
 
+### Deriving the er (RTL) path from a workspace
+
+A workspace directory is named after the **ner** `<DESIGN_NAME>` it was synced
+from. To get the matching er (RTL) release path (e.g. for velocetool's `--rtl`):
+
+- Prefix `/proj/vulcano_dump0/Release/<LSx>_Design/`.
+- Insert `_er` after the ss-number in the name
+  (`EPGM_ifoe_ss_156478_v3_…` → `EPGM_ifoe_ss_156478_er_v3_…`).
+
+The `_er` insertion and the `dump0/Release` prefix are mechanical, **but `<LSx>`
+(LSC / LSD / LSE) is NOT derivable from the workspace name** — it must be looked
+up per release. So the mapping is a per-release lookup, not a pure transform.
+
+Example (LSE):
+
+```
+workspace / ner: <...>/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z
+er (--rtl):      /proj/vulcano_dump0/Release/LSE_Design/EPGM_ifoe_ss_156478_er_v3_xcb_20250822T144931Z
+```
+
 **Releases are read-only snapshots** (`dr-xr-x---`, no write bits). That is why
 the first thing you do after copying one is `chmod -R u+w`. (For *why* they are
 snapshotted read-only, see `dev-workflow-ss-emu-add-release`.)
