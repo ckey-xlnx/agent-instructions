@@ -208,6 +208,8 @@ to the model ports, and the AXI sideband rides emu_zephyr→ctctb_axi_*.**
 
 ## Cross-references
 
+- **The model flavour above this glue** (the emu `ifoe_ss_model_t`, alongside the
+  arch/cmod flavours): `repo-ifoe-arch-model-ss-model`
 - **Runtime that uses this**: `dev-knowledge-ss-emu-environment`
 - **chip/_ip/_env overlay branch model**: `dev-knowledge-repo-ifoe-emu-overlays`
 - **Build**: `build-ifoe-arch-model-ss-emu`

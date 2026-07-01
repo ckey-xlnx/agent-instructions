@@ -24,7 +24,9 @@ model API can use the same API when driving:
 - C model wrapper (with firmware running to drive model registers)
 
 The same API works across the architectural model, subsystem emulation, and
-the C model.
+the C model. That API is `ifoe_ss_model_t` and its three interchangeable
+flavours (arch / emu / cmod); for the interface and what each flavour does
+beneath it, see `repo-ifoe-arch-model-ss-model`.
 
 ## How it is used
 
