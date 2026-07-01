@@ -2,8 +2,8 @@
 name: dev-knowledge-velocetool
 description: >
   velocetool-ifoe — the launcher that submits an IFoE ss-emu emulation job (it
-  wraps run_emu and Slurm). Where it lives in version control, the shared
-  checked-out copy that should work, and its arguments. Use when asked what
+  wraps run_emu and Slurm). Where it lives in version control, the common
+  checked-out copy, and its arguments. Use when asked what
   velocetool / velocetool-ifoe is, where to get it, or how to invoke it / what
   its args mean. For the grid job it submits see infra-grid-atl; for the --test
   directory it selects see dev-knowledge-ss-emu-environment.
@@ -19,10 +19,12 @@ to Slurm (partition `mi_veloce`), returning a job id. (For the grid side see
 ## Where it lives
 
 - **Version control:** `git@github.com:Xilinx-CNS/smartnic-vbu` (the tool is
-  `velocetool-ifoe` at the repo root).
-- **Shared checked-out copy that should work:**
-  `/proj/vulcano_dump2_ner/ckey/ifoe_test/smartnic-vbu/velocetool-ifoe`. Use this
-  rather than cloning your own unless you need to modify the tool.
+  `velocetool-ifoe` at the repo root). This is the source of truth; clone it if
+  you need the latest or want to modify the tool.
+- **Common checked-out copy:**
+  `/proj/vulcano_dump2_ner/common/smartnic-vbu/velocetool-ifoe`. Usable without
+  cloning your own, but note it is a shared convenience copy that may not be
+  actively kept up to date — if in doubt, clone from version control above.
 
 ## Arguments
 
