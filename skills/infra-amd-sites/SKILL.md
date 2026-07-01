@@ -3,7 +3,7 @@ name: infra-amd-sites
 description: >
   Reference for AMD sites (offices) and their site codes, used to interpret
   machine names and NFS paths. Use when you see a site code or site-prefixed
-  path (e.g. "atl:/proj/...", "the ATL filesystem", "xcb-ckey-l1"), when asked
+  path (e.g. "atl:/proj/...", "the ATL filesystem", "xcb-<user>-l1"), when asked
   which site a host or path belongs to, when a command must run "on the ATL
   filesystem" or at a particular site, or when a local filesystem path is not
   found because it lives at another site. Covers what a site is, the shared
@@ -24,7 +24,7 @@ Shared properties of sites:
   `/proj/...` is local to a particular site; the same path at another site is a
   different filesystem (or does not exist there).
 - **Machine-name prefix.** Machines at a site are named with the site code as a
-  prefix, e.g. `xcb-ckey-l1` is an `xcb` machine.
+  prefix, e.g. `xcb-<user>-l1` is an `xcb` machine.
 - **Site-prefixed NFS paths.** Documentation sometimes prefixes a site code to
   an NFS path to disambiguate which site's filesystem is meant, e.g.
   `atl:/proj/...` means `/proj/...` on the **atl** site.
@@ -54,12 +54,14 @@ How you get a machine to run on differs by site.
 
 ### VDI sites (persistent per-user machine)
 
-At these sites each user has their own persistent VDI (virtual desktop).
+At these sites each user has their own persistent VDI (virtual desktop). The
+hostnames below are the author's <!-- personal --> — substitute your own VDI at
+each site (same `<site><user>NNx` form).
 
-| Site  | ckey's VDI   | Notes                                  |
-|-------|--------------|----------------------------------------|
-| `xcb` | `xcbckey42x` |                                        |
-| `xsj` | `xsjckey41x` | may expire                             |
+| Site  | Your VDI (author's example) | Notes                         |
+|-------|-----------------------------|-------------------------------|
+| `xcb` | `xcbckey42x`                |                               |
+| `xsj` | `xsjckey41x`                | may expire                    |
 
 ### etx-allocated sites (dynamically allocated machine)
 
