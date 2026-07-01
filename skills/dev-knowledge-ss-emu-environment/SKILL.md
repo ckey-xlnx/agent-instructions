@@ -70,6 +70,61 @@ actually specified also differs between the variants (the self-contained app
 scripts whole tests via `ctb_cmd`; TE uses `ctb_cmd` only to boot an RPC
 provider and drives tests through the TE framework) — see their skills.
 
+## The "test" directory (model / test terminology, run.veloce, ctbconf.xml)
+
+### How the core infra names it
+
+velocetool's `--test <name>` is passed straight through to the next-level
+command, **`run_emu`**, as **`-test <name>`**, together with
+**`-model vulcano_ifoe`** (from `velocetool-ifoe`: `run_emu -model vulcano_ifoe
+-test <name>`). So in core-infra terms **`vulcano_ifoe` is the *model*** and the
+selected directory is **the *test*** (`-test <name>`). (velocetool itself is out
+of scope here — a separate concern.)
+
+Each test is a directory under the model:
+`chip/runtime/vulcano_ifoe/<test>/`, e.g. `ifoe_emu_test_app` (siblings include
+`te_test`, `vulcano_sdp_socapi_test`). At run time run_emu symlinks the chosen
+test directory into the session run directory as **`test_source`**
+(`test_source -> …/chip/runtime/vulcano_ifoe/<test>`), which is why scripts refer
+to files as `test_source/<file>`.
+
+**This directory lives in the `chip` overlay repo**, so it is version-controlled
+there alongside the rest of the chip overlay — see
+`dev-knowledge-repo-ifoe-emu-overlays`. (Note `ifoe_emu_test_app` and `te_test`
+themselves were added by IFoE overlay commits, e.g. IFOESW-88 / -410.)
+
+### What is in the test directory
+
+The files here control the run of the primary Veloce process. The load-bearing
+ones:
+
+- **`run.veloce`** — the Tcl script executed by the main Veloce process. It does
+  the low-level emulation driving: downloads waveform **triggers**
+  (`trigger download test_source/vul_trig.trig …`, or an absolute `.trigger`
+  path, with `-onmature capture_waveform` to upload a waveform on trigger
+  match), applies **forces/pokes** (`pForce emu_ifoe_ss_wrapper.… 'h1` — resets,
+  test-mode straps, PHY input tie-offs), and advances time (`run 1000ns`). This
+  is also where you would poke **`ctb_cmd_input`** to script the test (see the
+  ctb_cmd section above). `master.veloce` defines the default Veloce step
+  sequence (`emu_init` / `emu_run`); a test dir can override it.
+- **`ctbconf.xml`** — CTB configuration read by the emulation harness. Sets the
+  CTB `<testname>` (e.g. `cEmuSoc15HybridTest`), `<gui>`, `<debug_level>`,
+  optional `<ctb_commands>`, and — importantly — the **SoCAPI hybrid-path
+  definitions** that name the transactor scopes and bind them to RTL instances:
+  the AXI master (`vulcano_axi_mst` → `…vul_axi_mst_xtor_inst`) and the SDP
+  orig/cmpl paths (`orig_sdp0_rc`, `cmpl_sdp0_rc` → the `vul_orig_sdp0`/`cmpl`
+  instances). Those scope names are exactly what `ctctb_get_sdp_orig/_cmpl` and
+  `ctctb_get_axi_master` look up (see `dev-knowledge-arch-model-transactors`).
+- **triggers** — `.trig` / `.tdf` / `.vtf` files (e.g. `vul_trig.trig`) that
+  `run.veloce` downloads to capture waveforms at points of interest.
+- **`Reg_access*.txt`, `file*.txt`, `*.now`, `*.qel`, `*.zebu`** — per-port /
+  per-config register-access sequences, stimulus data, and step/hook scripts for
+  other emulation flavours (the `.veloce` variants are the Veloce ones).
+
+At run time the session run directory therefore contains `test_source` (the
+symlink above), `ctbconf.xml`, and `ctb_cmd_input`, and the run is driven by
+`run.veloce` reading from `test_source/`.
+
 ## VVED / EPGM — the ethernet transactor side
 
 The emulation session's ethernet is provided by a **VVED** transactor — the
