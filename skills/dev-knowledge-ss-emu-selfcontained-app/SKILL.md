@@ -31,7 +31,7 @@ duplicate:
 - Building the artifacts (`libdpi.so`, `emu_eth_to_arch`, `emu_eth_lb`):
   `build-ifoe-arch-model-ss-emu`
 - ctctb / ctb_cmd routing into test code: `dev-knowledge-arch-model-transactors`
-- The TE variant: `dev-knowledge-ss-emu-te` (planned; not yet written)
+- The TE variant: `dev-knowledge-ss-emu-te`
 
 ## The command line
 

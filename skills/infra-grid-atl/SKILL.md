@@ -88,6 +88,23 @@ Verified flow: a launched emulation job shows `ST=R` (running) on partition
 `mi_veloce` under `squeue`, and `scancel <jobid>` moves it to `CG` then clears
 it.
 
+### MI Veloce partitions are a priority ladder
+
+The `mi_*_veloce` partitions are the **same pool of MI Veloce emulators** (same
+56 nodes) at different **priority tiers** — which one you submit to is a
+run-priority choice, not a per-project or per-variant (self-contained vs TE)
+distinction:
+
+| Partition | Priority |
+|-----------|----------|
+| `mi_urgent_veloce` | highest |
+| `mi_high_veloce`   | high (PriorityTier 8) |
+| `mi_veloce`        | normal (PriorityTier 7) |
+
+So e.g. a job on `mi_high_veloce` just runs at higher priority than one on
+`mi_veloce`; both land on the same emulators. Pick the tier that fits the job's
+urgency.
+
 ## LSF: generic batch jobs and interactive shells
 
 `lsf_bsub` is an AMD wrapper using LSF-style `bsub` syntax. On submit it prints

@@ -113,12 +113,23 @@ git clone -b "$REL/$DESIGN" git@github.com:pensando/ifoe-emu-ip.git _ip
 mv _env _env.old
 git clone -b "$REL/$DESIGN" git@github.com:pensando/ifoe-emu-env.git _env
 
-# 4. Clone the arch model alongside, with its firmware submodule
+# 4. Clone the arch model alongside, with its submodules
 git clone git@github.com:pensando/ifoe-arch-model.git
 cd ifoe-arch-model
 git checkout <arch-model-branch>          # normal branch policy; e.g. main
-git submodule update --init external/mpifoe-fw/
+git submodule update --init               # all three top-level submodules
 ```
+
+Submodule notes (`.gitmodules` on `main` declares **three**:
+`external/ifoe_ss_model`, `external/mpifoe-fw`, `external/ualoe_access_lib`):
+
+- Run **`git submodule update --init`** (all three) — not just
+  `external/mpifoe-fw/`. The build needs `ifoe_ss_model` (it defines
+  `IFOE_SS_MODEL_ENCAP_TYPE_*`); initialising only mpifoe-fw leaves the build
+  broken.
+- Do **NOT** use `--recursive`: mpifoe-fw's nested submodules
+  (`dependencies/zephyr`, `dependencies/amd-zephyr-common`) point at
+  non-existent repos and abort the update. Top-level `--init` only.
 
 Notes (from the live work area):
 - The work-area directory **keeps the release name** (`$DESIGN`); it is *not*
@@ -146,11 +157,13 @@ the self-contained one). What it does differently:
 - **Renames the work dir to `epgm_ifoe_ss`** after the overlay swap (so the
   release lives at `<work>/epgm_ifoe_ss/` with `chip`/`_ip`/`_env` inside).
 - Clones extra repos alongside into the workspace:
-  - `ifoe-arch-model` (+ `external/mpifoe-fw` submodule) — branch via `-a`
-    (default `main`)
+  - `ifoe-arch-model` (+ submodules — see the submodule notes above; init all
+    three, not `--recursive`) — branch via `-a` (default `main`)
   - `ifoe-ts` (`pensando/ifoe-ts`) — the TE test suite — branch via `-t`
   - `te` (`Xilinx-CNS/ol-test-environment`) — the test engine — branch via `-e`
-    (default `devel/ifoe`)
+    (default `devel/ifoe`). ⚠️ `devel/ifoe` is a moving branch and has broken the
+    build; pin `te` to a known-good commit — see `dev-knowledge-ss-emu-te`
+    (co-versioning hazard).
   - `smartnic-vbu` (`Xilinx-CNS/smartnic-vbu`) — velocetool
 - **Copies prebuilt libraries** into `<DESIGN>/prebuilt/` from
   `…/Release/ifoe_tools/emul_prebuilt_libs/$REL/$DESIGN/` (self-contained has no
