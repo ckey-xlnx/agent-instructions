@@ -13,25 +13,37 @@ description: >
 The ASP (Application Security Processor) firmware lives in the `amd-tee3.0`
 repository and is built with the PSP RISC-V toolchain (NOT the Zephyr SDK).
 
-**Repository location**: `/proj/smartnic/xcb/ckey/ifoe-fw/amd-tee3.0`
+This build needs three things checked out **as siblings in one directory** —
+`amd-tee3.0`, `sw-security-tools`, and the RISC-V `toolchain` — because the build
+locates the toolchain relative to the tools (`${PSP_TOOLS_DIR}/../toolchain/...`).
+Put them wherever you like; `$SRC` below is that parent directory.
+
+```bash
+SRC=/proj/smartnic/xcb/ckey/src   # <!-- personal --> the author's location; set to your own
+```
+
+So `$SRC` must end up containing:
+- `$SRC/amd-tee3.0` — the ASP firmware repo
+- `$SRC/sw-security-tools` — the PSP security tools (see below)
+- `$SRC/toolchain/riscv/linux/riscv32-toolchain-linux/` — the RISC-V toolchain
 
 ## Prerequisites
 
-1. **PSP Security Tools**:
+1. **PSP Security Tools** — clone into `$SRC/sw-security-tools`:
    ```bash
-   # Clone from: ssh://ckey@git.amd.com:29418/sw_security/er/tools
-   # The repo was renamed to sw-security-tools
-   # Expected location: /proj/smartnic/xcb/ckey/ifoe-fw/sw-security-tools
+   # Clone from: ssh://<user>@git.amd.com:29418/sw_security/er/tools
+   # (the repo was renamed to sw-security-tools)
+   git clone ssh://<user>@git.amd.com:29418/sw_security/er/tools "$SRC/sw-security-tools"
    ```
 
 2. **RISC-V Toolchain** — the official PSP toolchain (not Zephyr SDK):
-   - Expected location: `${PSP_TOOLS_DIR}/../toolchain/riscv/linux/riscv32-toolchain-linux/bin/`
+   - Located, relative to the tools, at `${PSP_TOOLS_DIR}/../toolchain/riscv/linux/riscv32-toolchain-linux/bin/` — i.e. `toolchain/` must be a sibling of `sw-security-tools` (both directly under `$SRC`)
    - Required ABI: `-march=rv32imafc -mabi=ilp32f` (single-float)
    - The Zephyr SDK's `riscv64-zephyr-elf` has an ABI mismatch (soft-float vs single-float)
 
 3. **Git submodules** — initialize before building:
    ```bash
-   cd /proj/smartnic/xcb/ckey/ifoe-fw/amd-tee3.0
+   cd "$SRC/amd-tee3.0"
    git submodule update --init --recursive
    ```
 
@@ -40,8 +52,8 @@ repository and is built with the PSP RISC-V toolchain (NOT the Zephyr SDK).
 Build for MI450 (drv_preesid):
 
 ```bash
-cd /proj/smartnic/xcb/ckey/ifoe-fw/amd-tee3.0/amd_tee_dr/drv_preesid
-PSP_TOOLS_DIR=/proj/smartnic/xcb/ckey/ifoe-fw/sw-security-tools BUILD=MI450 make
+cd "$SRC/amd-tee3.0/amd_tee_dr/drv_preesid"
+PSP_TOOLS_DIR="$SRC/sw-security-tools" BUILD=MI450 make
 ```
 
 Supported build targets:
