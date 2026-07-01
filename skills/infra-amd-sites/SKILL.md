@@ -6,9 +6,9 @@ description: >
   path (e.g. "atl:/proj/...", "the ATL filesystem", "xcb-<user>-l1"), when asked
   which site a host or path belongs to, when a command must run "on the ATL
   filesystem" or at a particular site, or when a local filesystem path is not
-  found because it lives at another site. Covers what a site is, the shared
-  properties of sites, and the list of known site codes (atl, xcb, xsj, dfc,
-  sac, cac).
+  found because it lives at another site. Covers what a site is, enclaves (e.g.
+  xce, the Xilinx Cambridge Enclave inside xcb), the shared properties of sites, and
+  the list of known site codes (atl, xcb, xsj, dfc, sac, cac, xce).
 ---
 
 # AMD Sites Reference
@@ -37,6 +37,23 @@ Referencing the bare path on a machine at a different site will not find it, eve
 though DNS for the remote host resolves. If a `/proj/...` path is "not found"
 locally, suspect it lives at another site.
 
+## Enclaves
+
+Some "sites" are actually **enclaves** — an isolated environment that may sit
+physically inside another site but is walled off (typically for external
+contractor access) and behaves as a separate site: its own machines, its own
+filesystems, and restricted connectivity to the rest of AMD. Treat an enclave as
+its own site for filesystem/machine purposes.
+
+- **`xce`** — **X**ilinx **C**ambridge **E**nclave: physically located at `xcb`
+  (Xilinx Cambridge) but functioning as a separate, walled-off site, used for
+  external contractor access. Notably it **cannot reach `atlartifactory`**, which is why
+  `build-diag-tng` uses a pre-populated Conan cache on the XCE side instead of
+  pulling packages directly (see `build-diag-tng`, `infra-amd-storage`). Its
+  machines run the Pandora environment (e.g. used for diag_tng builds). Access
+  model (VDI vs etx) and its local filesystem layout are not yet documented
+  here — record them as they are established.
+
 ## Known site codes
 
 | Code  | Office / location                      |
@@ -47,6 +64,7 @@ locally, suspect it lives at another site.
 | `cac` | CACO Cadence Colo                      |
 | `dfc` | Dallas/Fort Worth Data Center (DFDC)   |
 | `sac` | Sacramento Data Center (SADC)          |
+| `xce` | Xilinx Cambridge Enclave (physically at `xcb`; contractor access; see Enclaves) |
 
 ## Per-site access
 

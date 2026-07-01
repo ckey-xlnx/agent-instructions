@@ -30,7 +30,7 @@ Two axes matter and are documented in the companion skills:
 |------|--------------|------|-------|
 | **Launch SimNow** (+ QEMU) | `xcbl-rtl01` (or a host in the launch script's `ALLOWED_HOSTS`) | fixed named host(s) | required by `dev-workflow-simnow-launch`; the launch script hard-fails on other hosts |
 | **Build SimNow** | an LSF-allocated **RHEL8** build server | allocated (LSF) | `lsf_bsub -q normal -Is -P simnow-perf -R "select[(type==RHEL8_64)] rusage[mem=64000]" ...`; see `build-simnow` |
-| **Build diag_tng (XCE/Pandora)** | a host with the Pandora environment on XCE | allocated / enclave | `build-diag-tng` (XCE path); XCE can't reach atlartifactory (drives the Conan-cache workaround). XCE is a separate enclave — TODO: document in `infra-amd-sites` |
+| **Build diag_tng (XCE/Pandora)** | a host with the Pandora environment on XCE | allocated / enclave | `build-diag-tng` (XCE path); XCE can't reach atlartifactory (drives the Conan-cache workaround). XCE (Xilinx Cambridge Enclave) is a walled-off site — see `infra-amd-sites` (Enclaves) |
 | **Build diag_tng (DFC)** | a DFC host, e.g. `dfcetx8-emu001` | example host | `build-diag-tng` (DFC path); can auth to atlartifactory directly |
 | **ss-emu emulation / Veloce job** | an **atl** etx-allocated host; the job itself runs via Slurm (`mi_veloce`) on the emulator | allocated (etx + Slurm) | grid is **atl-only**; see `infra-grid-atl`. Physical emulator selected via `--emu-list` (e.g. MUGELLO) |
 | **ss-emu build** | an atl machine (in your workarea) | allocated (etx) | atl-only; see `build-ifoe-arch-model-ss-emu` |
