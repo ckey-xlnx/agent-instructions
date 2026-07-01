@@ -71,10 +71,7 @@ bootenv -C <workarea>
 
 Emulation sessions are **Slurm** jobs (partition `mi_veloce`). They are
 launched indirectly: `velocetool-ifoe` submits to Slurm internally and prints
-`SLURM job_id is <id>`. (A personal bodge wrapper <!-- personal -->
-`/proj/vulcano_dump2_ner/ckey/ifoe_test/goall.sh` drives velocetool for a given
-workarea; it keys off `basename $(pwd)`, so run it from the workarea dir. This is
-a personal one-off, not shared tooling — to be digested/cleaned up later.)
+`SLURM job_id is <id>`.
 
 Manage the session with Slurm:
 
