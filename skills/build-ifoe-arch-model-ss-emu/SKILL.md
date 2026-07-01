@@ -24,21 +24,16 @@ ifoe-arch-model can be built in more than one configuration; this skill covers
 the **self-contained subsystem-emulation (ss-emu)** build only. Building it as
 part of the TE (Test Environment) is a separate flow not documented here.
 
-## Subsystem emulation setup
+## Prerequisite: a workspace
 
-Directory structure:
-- Clone ifoe-arch-model into a copy of a released subsystem emulation model.
-  Example: `atl:/proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z/ifoe-arch-model`
-- Alongside ifoe-arch-model, clone additional repos that replace content within
-  the released model:
-  - `chip` repo at `${MODEL}/chip`
-  - `_ip` repo at `${MODEL}/_ip`
-  - `_env` repo at `${MODEL}/_env`
-- These additional repos have a branch per model release
-  (e.g. `LSE_Design/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z`).
-- ifoe-arch-model itself follows a normal branch policy.
+This build runs inside an ss-emu **workspace** — a writable copy of a released
+model with the `chip`/`_ip`/`_env` overlays swapped for their git clones and
+`ifoe-arch-model` cloned alongside. Creating one (release sync, overlay swap,
+arch-model clone) is a separate procedure: see `dev-workflow-ss-emu-workspace`.
 
-`${MODEL}` below is the path to the subsystem emulation model.
+Below, `$MODEL` is that workspace's model directory (the `$DESIGN` dir from the
+workspace skill, i.e. `$WORK/$DESIGN`), and you build from the `ifoe-arch-model`
+directory cloned inside it.
 
 ## Environment setup
 
@@ -51,14 +46,8 @@ Prerequisites: must use bash (not zsh), and set up the environment before buildi
 # Step 1: Source initialization script
 source /proj/verif_release_ro/cbwa_initscript/current/cbwa_init.bash
 
-# Step 2: Boot environment for emulation
-bootenv -u emu_epgm -C ${MODEL}
-```
-
-Example with full path:
-
-```bash
-bootenv -u emu_epgm -C /proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z
+# Step 2: Boot environment for emulation ($MODEL = your workspace's model dir)
+bootenv -u emu_epgm -C "$MODEL"
 ```
 
 ## Build steps
