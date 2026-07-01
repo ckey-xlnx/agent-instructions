@@ -81,6 +81,14 @@ Notes:
 
 ## Step 4: Package
 
+The packaged output is large, so `--output-dir` needs somewhere with plenty of
+storage — a `/proj/...` scratch/dump area, not your home directory. Set `$OUT`
+to such a location:
+
+```bash
+OUT=/proj/vulcano_dump2_ner/$USER/simnow/packaging   # <!-- personal --> any big-storage dir you own
+```
+
 Standard zip release:
 
 ```bash
@@ -88,13 +96,13 @@ Standard zip release:
 /tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
   --project mi450_ifoe \
   --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-release \
-  --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging
+  --output-dir "$OUT"
 
 # Debug build
 /tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
   --project mi450_ifoe \
   --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-debug \
-  --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging
+  --output-dir "$OUT"
 ```
 
 Produces zips named like:
@@ -108,14 +116,14 @@ For iterative development (rsync deployment, no zip), use `--no-date --no-sha --
 /tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
   --project mi450_ifoe \
   --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-release \
-  --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging \
+  --output-dir "$OUT" \
   --no-date --no-sha --no-zip
 
 # Debug build
 /tools/pandora64/.package/python-3.14.0/bin/python3 scripts/package/package.py \
   --project mi450_ifoe \
   --simnow-root $(pwd)/builds/linux-ninja-pandora-gcc10-debug \
-  --output-dir /proj/vulcano_dump2_ner/ckey/simnow/packaging \
+  --output-dir "$OUT" \
   --no-date --no-sha --no-zip
 ```
 
@@ -123,4 +131,5 @@ Produces directories named like:
 - `simnow-linux64-rhel8-gcc10-mi450_ifoe-00000000-0000000000` (release)
 - `simnow-linux64-rhel8-gcc10-mi450_ifoe-debug-00000000-0000000000` (debug)
 
-Note: the `--output-dir` shown is a user-specific convention, not a requirement.
+Note: `$OUT` is only a convention — any writable big-storage directory works;
+it does not have to be under `/proj/vulcano_dump2_ner`.
