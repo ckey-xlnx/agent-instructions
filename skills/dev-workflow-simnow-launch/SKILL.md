@@ -23,17 +23,27 @@ Debug:   simnow-linux64-rhel8-gcc10-mi450_ifoe-20260514-0P1G-M222-debug-combined
 
 Both installed under `/proj/smartnic/xcb/ifoe/simnow/`.
 
-## Step 1: Launch SimNow
-
-From a scratch directory (e.g. `/scratch/ckey/simnow`), run inside a `screen` session:
+## Paths you provide
 
 ```bash
-cd /scratch/ckey/simnow
+SCRATCH=/scratch/ckey/simnow    # <!-- personal --> a scratch working dir you own
+MPIFOE_FW=/home/ckey/hg/mpifoe-fw   # <!-- personal --> your mpifoe-fw checkout
+```
+
+`$SCRATCH` is any working directory; `$MPIFOE_FW` is wherever you cloned the
+`mpifoe-fw` repo.
+
+## Step 1: Launch SimNow
+
+From your scratch directory, run inside a `screen` session:
+
+```bash
+cd "$SCRATCH"
 /tool/pandora64/bin/screen -dmS simnow bash -c \
-  '/home/ckey/hg/mpifoe-fw/scripts/simnow-launch/sim222.IFoE_link_0_to_1.sh \
+  "$MPIFOE_FW/scripts/simnow-launch/sim222.IFoE_link_0_to_1.sh \
   --slt \
   -r /proj/smartnic/xcb/ifoe/simnow/simnow-linux64-rhel8-gcc10-mi450_ifoe-20260514-0P1G-M222-release-combined-v7-a85ee03f90 \
-  -fw /home/ckey/hg/mpifoe-fw/build/fw.mi450-a0.simnow_eftest/zephyr/mpifoe_fw.hbin'
+  -fw $MPIFOE_FW/build/fw.mi450-a0.simnow_eftest/zephyr/mpifoe_fw.hbin"
 ```
 
 **Use `screen`, not `tmux`** — killing a tmux server kills all sessions within it.
@@ -126,7 +136,7 @@ When all writes are done, send `go` to resume SimNow:
 ## Step 4: Launch QEMU
 
 ```bash
-cd /scratch/ckey/simnow
+cd "$SCRATCH"
 /tool/pandora64/bin/screen -dmS qemu bash -c './launch-qemu.sh'
 ```
 
