@@ -100,4 +100,5 @@ to an ABI mismatch:
 error: can't link soft-float modules with single-float modules
 ```
 
-Solution: use the official PSP RISC-V toolchain from the sw-security-tools repo.
+Solution: use the official PSP RISC-V toolchain — the sibling `toolchain/` dir
+under `$SRC` (see Prerequisites), not the Zephyr SDK.
