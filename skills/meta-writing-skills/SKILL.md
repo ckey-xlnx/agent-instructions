@@ -131,6 +131,44 @@ This is `dev-knowledge` (reference applied inline, context-triggered), not a
 workflow. It complements — does not replace — the commit/PR that carries the
 fix: the commit explains the change; the skill makes the symptoms findable.
 
+## Sharing and personal content
+
+These skills are shared with teammates working on the same project, who have
+access to the same org, sites, and `/proj` paths. So AMD-internal, site, and
+project specifics are all fine to include as-is — the only content that is
+genuinely *not* shared is what is personal to one user.
+
+Keep skills shareable by default:
+
+- **Parameterize personal paths** rather than hardcoding them. Prefer `$HOME`,
+  `$USER`, `/scratch/$USER/...`, `/proj/.../$USER/...` over `/home/ckey/...` etc.
+  This makes the skill *correct* for every teammate, not merely flagged as
+  wrong. Where a concrete value aids understanding, show it as an example and
+  say to substitute their own.
+- **Mark the rare irreducibly-personal span** — a genuine personal convention
+  or choice that is not a project fact — with an XML comment marker so a
+  teammate sees it should be adapted, not taken as gospel:
+
+  ```
+  Output dir <!-- personal --> `/proj/vulcano_dump2_ner/$USER/simnow/packaging`
+  is a personal convention; use any writable path.
+  ```
+
+  The `<!-- personal -->` marker is greppable and visually distinct from prose.
+  Nothing needs stripping on share — the marker just flags "adapt this".
+
+- **A deliberately-shared resource owned by someone else stays literal** — don't
+  parameterize it. If a skill points at a *specific* shared checkout, script, or
+  file that every teammate reads at the same location (e.g. a colleague's script
+  at `.../users/<their-name>/...`, or a shared tool checkout), leave the literal
+  path: substituting `$USER` would break it. Only *your own* work paths get
+  parameterized. Caveat: don't mistake a personal path for a shared one — a path
+  under your own area is shared-as-is *only if you actually intend teammates to
+  use that exact copy*; otherwise point the skill at a genuinely common location.
+
+An entire skill that is inherently personal (e.g. a named custom process) is
+fine as its own skill; its name signals ownership and teammates can ignore it.
+
 ## Discovery mechanics
 
 - Skills here are version-controlled in `agent-instructions/skills/`
