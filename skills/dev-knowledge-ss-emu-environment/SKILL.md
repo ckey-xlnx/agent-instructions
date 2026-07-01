@@ -99,14 +99,15 @@ The files here control the run of the primary Veloce process. The load-bearing
 ones:
 
 - **`run.veloce`** — the Tcl script executed by the main Veloce process. It does
-  the low-level emulation driving: downloads waveform **triggers**
-  (`trigger download test_source/vul_trig.trig …`, or an absolute `.trigger`
-  path, with `-onmature capture_waveform` to upload a waveform on trigger
-  match), applies **forces/pokes** (`pForce emu_ifoe_ss_wrapper.… 'h1` — resets,
-  test-mode straps, PHY input tie-offs), and advances time (`run 1000ns`). This
-  is also where you would poke **`ctb_cmd_input`** to script the test (see the
-  ctb_cmd section above). `master.veloce` defines the default Veloce step
-  sequence (`emu_init` / `emu_run`); a test dir can override it.
+  the low-level emulation driving: downloads waveform triggers from `.trig` /
+  `.tdf` / `.vtf` files in the test dir (`trigger download
+  test_source/vul_trig.trig …`, or an absolute `.trigger` path, with
+  `-onmature capture_waveform` to upload a waveform on trigger match), applies
+  **forces/pokes** (`pForce emu_ifoe_ss_wrapper.… 'h1` — resets, test-mode
+  straps, PHY input tie-offs), and advances time (`run 1000ns`). This is also
+  where you would poke **`ctb_cmd_input`** to script the test (see the ctb_cmd
+  section above). `master.veloce` defines the default Veloce step sequence
+  (`emu_init` / `emu_run`); a test dir can override it.
 - **`ctbconf.xml`** — CTB configuration read by the emulation harness. Sets the
   CTB `<testname>` (e.g. `cEmuSoc15HybridTest`), `<gui>`, `<debug_level>`,
   optional `<ctb_commands>`, and — importantly — the **SoCAPI hybrid-path
@@ -115,8 +116,9 @@ ones:
   orig/cmpl paths (`orig_sdp0_rc`, `cmpl_sdp0_rc` → the `vul_orig_sdp0`/`cmpl`
   instances). Those scope names are exactly what `ctctb_get_sdp_orig/_cmpl` and
   `ctctb_get_axi_master` look up (see `dev-knowledge-arch-model-transactors`).
-- **triggers** — `.trig` / `.tdf` / `.vtf` files (e.g. `vul_trig.trig`) that
-  `run.veloce` downloads to capture waveforms at points of interest.
+- **trigger files** (`.trig` / `.tdf` / `.vtf`, e.g. `vul_trig.trig`) — waveform
+  trigger definitions; not run directly, they are downloaded by `run.veloce`
+  (above).
 - **`Reg_access*.txt`, `file*.txt`, `*.now`, `*.qel`, `*.zebu`** — per-port /
   per-config register-access sequences, stimulus data, and step/hook scripts for
   other emulation flavours (the `.veloce` variants are the Veloce ones).
