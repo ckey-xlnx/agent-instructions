@@ -30,9 +30,11 @@ bug.
 ## Where the grids exist
 
 Only at the **`atl` site**. There is **no grid at `xcb`** and these commands are
-not installed there. Run everything on an atl machine. atl is etx-allocated
-(no fixed host); see `infra-amd-sites`. A known reachable host form is
-`atletx8-reg111` (ssh as `ckey@atletx8-reg111`).
+not installed there. Run everything on **your** atl machine. atl is
+etx-allocated: there is no fixed or shared host — each user connects to their
+own dynamically-allocated machine with an active etx session (e.g. ssh as
+`ckey@atletx8-reg111` <!-- personal -->; the host is per-user and transient).
+See `infra-amd-sites` for how etx allocation works and its caveats.
 
 Binaries verified on atl:
 - `lsf_bsub` → `/tool/pandora64/bin/lsf_bsub`
@@ -62,17 +64,17 @@ bootenv -C <workarea>
   bare `bootenv` fails with "Can't boot this workspace". `-C` accepts the
   top-level workarea or a directory below it. bootenv works via
   `module load wa_boot/...`.
-- Example workarea (atl):
-  `/proj/vulcano_dump2_ner/ckey/ifoe_test/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z`
+- Example workarea (atl) <!-- personal -->:
+  `/proj/vulcano_dump2_ner/$USER/ifoe_test/EPGM_ifoe_ss_156478_v3_xcb_20250822T144931Z`
 
 ## Slurm: emulation / Veloce sessions
 
 Emulation sessions are **Slurm** jobs (partition `mi_veloce`). They are
 launched indirectly: `velocetool-ifoe` submits to Slurm internally and prints
-`SLURM job_id is <id>`. (The local bodge wrapper
+`SLURM job_id is <id>`. (A personal bodge wrapper <!-- personal -->
 `/proj/vulcano_dump2_ner/ckey/ifoe_test/goall.sh` drives velocetool for a given
-workarea; it keys off `basename $(pwd)`, so run it from the workarea dir. To be
-digested/cleaned up later.)
+workarea; it keys off `basename $(pwd)`, so run it from the workarea dir. This is
+a personal one-off, not shared tooling — to be digested/cleaned up later.)
 
 Manage the session with Slurm:
 
