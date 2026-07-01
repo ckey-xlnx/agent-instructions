@@ -250,6 +250,37 @@ repo skills are written.)
 host, the process-tree teardown failed — check the ssh hook and the remote
 EXIT-trap path rather than assuming the job itself is still alive.
 
+## Where results / logs appear
+
+Outputs land in a **session run directory** created inside the **cloned emu
+release directory** (the release the workspace was built from), under
+`run_emu.session/`:
+
+```
+<emu-release-dir>/run_emu.session/vulcano_ifoe/<test>/<N>/
+```
+
+where `<test>` is the `-test` name (e.g. `ifoe_emu_test_app`) and `<N>` is a
+per-run instance number (`0`, `1`, …). This is the same shape for both variants;
+only the location of `<emu-release-dir>` differs:
+
+- **self-contained**: the release dir keeps its release name at the workarea top,
+  so e.g. `<workarea>/EPGM_ifoe_ss_…/run_emu.session/vulcano_ifoe/<test>/<N>/`.
+- **TE**: the release dir is renamed to `epgm_ifoe_ss` under `emul_te_build`, so
+  `<workarea>/emul_te_build/epgm_ifoe_ss/run_emu.session/vulcano_ifoe/<test>/<N>/`.
+
+Inside that per-run directory you get the run's control/copies and outputs:
+`test_source` (symlink to the test dir), `ctbconf.xml`, `ctb_cmd_input`,
+`run_emu.log`, `sim.log`, and `veloce.log/` (e.g. `tbxrun_p1.log`, which carries
+the `EPGM DPI is now running on host … in VVED Domain …` line). The EPGM
+secondary processes log to `epgm.log` / `epgmapp.log` (see above).
+
+**Primary-process stdout** goes to `slurm-<jobid>.out` at the emu-release-dir top
+level (these can be very large — multi-GB for long runs).
+
+This skill only says *where* results appear; how to interpret specific outputs is
+left to the variant / result-analysis skills.
+
 ## Where to go next
 
 - **Self-contained test app variant** (ifoe_test): `dev-knowledge-ss-emu-selfcontained-app`
