@@ -74,7 +74,7 @@ The xncmdclient setup (Step 1) must be run once per SimNow boot. `tng_executor` 
 
 ## File system notes (important)
 
-- **`/myhome` is read-only inside the VM** — it is a virtfs mount of `/home/ckey` on the host. Use it for reading inputs (e.g. the config JSON) only. Any write attempt is silently dropped.
+- **`/myhome` is read-only inside the VM** — it is a virtfs mount of the host's home directory (`/home/$USER`). Use it for reading inputs (e.g. the config JSON) only. Any write attempt is silently dropped.
 - **Write all logs and temp files to `/tmp`** inside the VM (e.g. `tee /tmp/tng_executor.log`).
 - To retrieve logs to the host: `cat` over SSH or `scp` — `/tmp` in the VM is not shared with the host.
 - `/simnow` inside the VM is a host-mounted path — treat as read-only.
