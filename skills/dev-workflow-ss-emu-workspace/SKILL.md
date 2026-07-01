@@ -147,6 +147,16 @@ You can now **build**: see `build-ifoe-arch-model-ss-emu` (bash + cbwa +
 `bootenv -u emu_epgm -C $WORK/$DESIGN`, then `etx-meson` / `etx-ninja` /
 `emu-post-ninja`).
 
+### velocetool (needed to run, not to build)
+
+The self-contained flow launches with `velocetool-ifoe`, which is **not** part of
+the workspace or the release — you provide it separately. Use a per-user clone at
+`/proj/vulcano_dump2_ner/<user>/smartnic-vbu` (shared across your workspaces); do
+**not** use the stale `common/smartnic-vbu` copy. See `dev-knowledge-velocetool`
+for how to obtain it and why, and `dev-knowledge-ss-emu-selfcontained-app` for the
+command line. (The TE flow instead clones velocetool into its own workspace via
+`checkout.sh` — see below.)
+
 ## TE workspace (differences)
 
 The TE flow (`ifoe_te` style work area) does the same release-sync + overlay-swap,

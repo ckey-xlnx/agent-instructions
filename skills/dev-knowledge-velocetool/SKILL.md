@@ -18,13 +18,26 @@ to Slurm (partition `mi_veloce`), returning a job id. (For the grid side see
 
 ## Where it lives
 
-- **Version control:** `git@github.com:Xilinx-CNS/smartnic-vbu` (the tool is
-  `velocetool-ifoe` at the repo root). This is the source of truth; clone it if
-  you need the latest or want to modify the tool.
-- **Common checked-out copy:**
-  `/proj/vulcano_dump2_ner/common/smartnic-vbu/velocetool-ifoe`. Usable without
-  cloning your own, but note it is a shared convenience copy that may not be
-  actively kept up to date — if in doubt, clone from version control above.
+- **Version control (source of truth):** `git@github.com:Xilinx-CNS/smartnic-vbu`
+  (the tool is `velocetool-ifoe` at the repo root).
+- **Recommended: a per-user clone** at `/proj/vulcano_dump2_ner/<user>/smartnic-vbu`.
+  One clone, shared across all your ss-emu workspaces, that you own and can
+  `git pull`. Create it once:
+
+  ```bash
+  cd /proj/vulcano_dump2_ner/<user>
+  git clone git@github.com:Xilinx-CNS/smartnic-vbu.git
+  ```
+
+- **Do NOT rely on `/proj/vulcano_dump2_ner/common/smartnic-vbu`.** It is a stale
+  shared snapshot: it **hardcodes `--partition=veloce`** and ignores the
+  `--partition` argument, so submissions fail with `Invalid partition specified:
+  veloce`. Upstream (and a fresh clone) honour `--partition` correctly.
+
+> The **TE flow is different** — its `ifoe_emu_ci/scripts/checkout.sh` clones
+> `smartnic-vbu` into the workspace itself and calls it by workspace-relative
+> path. That is owned by the TE scripts; leave it alone. The per-user clone above
+> is for the **self-contained** flow. See `dev-knowledge-ss-emu-te`.
 
 ## Arguments
 
